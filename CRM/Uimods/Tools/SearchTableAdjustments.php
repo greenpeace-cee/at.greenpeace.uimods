@@ -131,9 +131,8 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
    * Modify the contribution search result table (GP-716)
    */
   public static function adjustContributionTable($objectName, &$headers, &$rows, &$selector) {
-    // adjust headers
     $campaign_colum = $payment_instrument_colum = $ba_column = $index = -1;
-    foreach ($headers as &$header) {
+    foreach ($headers as $id => &$header) {
       $index += 1;
       switch (CRM_Utils_Array::value('sort', $header)) {
         case 'contribution_source':
@@ -159,6 +158,12 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
 
         default:
           break;
+      }
+      // In Civi 4.6, the first column is used for the contact type icon, while
+      // Civi 4.7 renders this column as part of the template. To be compatible
+      // with both, we remove the column here and render it in UImodsSelector.tpl
+      if ($id == 0 && !empty($header['desc'])) {
+        unset($headers[0]);
       }
     }
 

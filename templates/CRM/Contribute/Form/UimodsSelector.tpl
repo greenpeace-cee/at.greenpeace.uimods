@@ -26,21 +26,25 @@
 {include file="CRM/common/pager.tpl" location="top"}
 
 {strip}
+<div class="crm-contact-contribute-contributions">
 <table class="selector row-highlight">
   <thead class="sticky">
   <tr>
     {if !$single and $context eq 'Search' }
-        <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th>
+      <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th>
+    {/if}
+    {if !$single}
+      <th scope="col"></th>
     {/if}
     {foreach from=$columnHeaders item=header}
-        <th scope="col">
-        {if $header.sort}
-          {assign var='key' value=$header.sort}
-          {$sort->_response.$key.link}
-        {else}
-          {$header.name}
-    {/if}
-        </th>
+      <th scope="col">
+      {if $header.sort}
+        {assign var='key' value=$header.sort}
+        {$sort->_response.$key.link}
+      {else}
+        {$header.name}
+      {/if}
+      </th>
     {/foreach}
   </tr>
   </thead>
@@ -88,6 +92,7 @@
   {/foreach}
 
 </table>
+</div>
 {/strip}
 
 {include file="CRM/common/pager.tpl" location="bottom"}
