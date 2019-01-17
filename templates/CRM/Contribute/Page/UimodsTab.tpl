@@ -29,7 +29,7 @@
 {elseif $action eq 4}
     {include file="CRM/Contribute/Form/ContributionView.tpl"}
 {else}
-    <div class="view-content">
+    <div class="contact-summary-contribute-tab view-content">
         <div id="help">
             {if $permission EQ 'edit'}
               {capture assign=newContribURL}{crmURL p="civicrm/contact/view/contribution" q="reset=1&action=add&cid=`$contactId`&context=contribution"}{/capture}
