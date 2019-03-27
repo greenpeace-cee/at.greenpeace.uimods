@@ -26,3 +26,8 @@ CRM.$('tr:contains("Summary Fields")').hide();
 CRM.vars.hiddenCustomFields.forEach(function(field) {
   CRM.$('tr:has(input[name="move_' + field + '"])').hide();
 });
+
+// hide matching rows by default
+CRM.$(function($) {
+  $('.toggle_equal_rows').click();
+});

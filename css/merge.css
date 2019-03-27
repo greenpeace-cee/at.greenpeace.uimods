@@ -1,0 +1,7 @@
+.crm-contact-merge-form-block table {
+  table-layout: fixed;
+}
+
+.crm-contact-merge-form-block table td {
+  overflow: auto;
+}

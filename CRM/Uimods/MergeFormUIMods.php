@@ -26,6 +26,8 @@ class CRM_Uimods_MergeFromUIMods {
    */
   public static function buildFormHook($formName, &$form) {
 
+    CRM_Core_Resources::singleton()->addStyleFile('at.greenpeace.uimods', 'css/merge.css');
+
     $script = file_get_contents(__DIR__ . '/../../js/merge_form_mods.js');
     $hiddenCustomFields = [];
 
