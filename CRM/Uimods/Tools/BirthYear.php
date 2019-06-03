@@ -24,9 +24,9 @@ class CRM_Uimods_Tools_BirthYear {
   protected static $_birthyear_custom_field = NULL;
 
   /**
-   * Is ignore to clear birth year
+   * Is forbid to clear birth year
    */
-  protected static $_ignore_to_clear_birth_year = FALSE;
+  protected static $_is_forbid_to_clear_birth_year = FALSE;
 
   /**
    * process POST hook
@@ -35,7 +35,7 @@ class CRM_Uimods_Tools_BirthYear {
     // fills the custom field with the correct birth year if someone updates CiviCRM's Birth Date field
 
     if ($objectRef instanceof CRM_Contact_DAO_Contact) {
-      if (isset($objectRef->birth_date) && !self::$_ignore_to_clear_birth_year) {
+      if (isset($objectRef->birth_date) && !self::$_is_forbid_to_clear_birth_year) {
         $contactBirthYear = NULL;
 
         if ((!empty($objectRef->birth_date))
@@ -100,7 +100,7 @@ class CRM_Uimods_Tools_BirthYear {
             }
             // Is birth date = birth year? (Match only long format)
             if ($contactBirthYear->format('Y') != $birthYear) {
-              self::$_ignore_to_clear_birth_year = TRUE;
+              self::$_is_forbid_to_clear_birth_year = TRUE;
 
               //Delete birth_date
               $result = civicrm_api3('Contact', 'create', array(
@@ -108,7 +108,7 @@ class CRM_Uimods_Tools_BirthYear {
                 'birth_date' => '',
               ));
 
-              self::$_ignore_to_clear_birth_year = FALSE;
+              self::$_is_forbid_to_clear_birth_year = FALSE;
             }
           }
         }
