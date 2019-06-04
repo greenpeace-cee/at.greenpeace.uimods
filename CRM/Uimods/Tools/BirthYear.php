@@ -17,11 +17,16 @@
  * Keep birth_date and birth year in sync
  */
 class CRM_Uimods_Tools_BirthYear {
+
   /**
    * Get the birth year custom field
    */
   protected static $_birthyear_custom_field = NULL;
 
+  /**
+   * Is forbid to clear birth year
+   */
+  protected static $_is_forbid_to_clear_birth_year = FALSE;
 
   /**
    * process POST hook
@@ -30,22 +35,25 @@ class CRM_Uimods_Tools_BirthYear {
     // fills the custom field with the correct birth year if someone updates CiviCRM's Birth Date field
 
     if ($objectRef instanceof CRM_Contact_DAO_Contact) {
-      if ((!empty($objectRef->birth_date))
+      if (isset($objectRef->birth_date) && !self::$_is_forbid_to_clear_birth_year) {
+        $contactBirthYear = NULL;
+
+        if ((!empty($objectRef->birth_date))
           && ($objectRef->birth_date != 'null')) {
-        // Contact Birth date has a value
-        try {
-          $contactBirthYear = new DateTime($objectRef->birth_date);
-        }
-        catch (Exception $e) {
-          return;
+          // Contact Birth date has a value
+          try {
+            // Contact birth date to (long) year
+            $contactBirthYear = (new DateTime($objectRef->birth_date))->format('Y');
+          } catch (Exception $e) {
+            return;
+          }
         }
 
         $birthYearField = self::getCustomField();
         // Update birth year custom field with new value
         $customValues = civicrm_api3('CustomValue', 'create', array(
           'entity_id' => $objectRef->id,
-          // Contact birth date to (long) year
-          "custom_{$birthYearField['id']}" => $contactBirthYear->format('Y'),
+          "custom_{$birthYearField['id']}" => $contactBirthYear,
         ));
       }
     }
@@ -92,11 +100,15 @@ class CRM_Uimods_Tools_BirthYear {
             }
             // Is birth date = birth year? (Match only long format)
             if ($contactBirthYear->format('Y') != $birthYear) {
+              self::$_is_forbid_to_clear_birth_year = TRUE;
+
               //Delete birth_date
               $result = civicrm_api3('Contact', 'create', array(
                 'id' => $entity['entity_id'],
                 'birth_date' => '',
               ));
+
+              self::$_is_forbid_to_clear_birth_year = FALSE;
             }
           }
         }
