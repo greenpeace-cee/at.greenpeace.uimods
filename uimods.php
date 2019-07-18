@@ -252,3 +252,23 @@ _uimods_civix_civicrm_angularModules($angularModules);
 function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _uimods_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
+
+/**
+ * Implements hook_civicrm_preProcess().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
+ */
+function uimods_civicrm_preProcess($formName, &$form) {
+  if ($formName === 'CRM_Contact_Form_Merge') {
+    // Re-add colour coding - sill not be required when issue is resolved.
+    // https://github.com/civicrm/org.civicrm.shoreditch/issues/373
+    CRM_Core_Resources::singleton()->addStyle('
+    /* table row highlighting */
+    .page-civicrm-contact-merge .crm-container table.row-highlight tr.crm-row-ok td{
+       background-color: #EFFFE7 !important;
+    }
+    .page-civicrm-contact-merge .crm-container table.row-highlight .crm-row-error td{
+       background-color: #FFECEC !important;
+    }');
+  }
+}
