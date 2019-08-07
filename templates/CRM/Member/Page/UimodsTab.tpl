@@ -27,7 +27,7 @@
 {if $action eq 1 or $action eq 2 or $action eq 8} {* add, update or delete *}
     {include file="CRM/Member/Form/Membership.tpl"}
 {elseif $action eq 4}
-    {include file="CRM/Member/Form/MembershipView.tpl"}
+    {include file="CRM/Member/Form/UimodsMembershipView.tpl"}
 {elseif $action eq 32768}  {* renew *}
     {include file="CRM/Member/Form/MembershipRenewal.tpl"}
 {elseif $action eq 16} {* Browse memberships for a contact *}

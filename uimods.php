@@ -110,6 +110,15 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
   } elseif ($tplName == 'CRM/Contribute/Page/Tab.tpl') {
     // modified version based on CiviCRM 4.6.22         SHA1: 9f82712218a9a19aabfc0906c4afbcd6faf19ee7
     $tplName = 'CRM/Contribute/Page/UimodsTab.tpl';
+  } elseif ($tplName == 'CRM/Contact/Form/Search/Advanced.tpl') {
+    if (isset($form->_submitValues['component_mode'])
+      && $form->_submitValues['component_mode'] == CRM_Contact_BAO_Query::MODE_CONTRIBUTE) {
+      $modeValue = $form->getVar('_modeValue');
+      if (!empty($modeValue['resultFile'])
+        && $modeValue['resultFile'] == 'CRM/Contribute/Form/Selector.tpl') {
+        CRM_Core_Smarty::singleton()->assign('resultFile', 'CRM/Contribute/Form/UimodsSelector.tpl');
+      }
+    }
   }
 }
 
