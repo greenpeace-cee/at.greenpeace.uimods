@@ -79,6 +79,11 @@ function uimods_civicrm_buildForm($formName, &$form) {
     case 'CRM_Member_Form_MembershipView':
       CRM_Uimods_ContractDownload::remove($form);
       break;
+
+    case 'CRM_Activity_Form_Search':
+      if ($form->elementExists('activity_role')) {
+        $form->setDefaults(['activity_role' => 0]);
+      }
   }
 }
 
