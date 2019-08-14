@@ -81,6 +81,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
       break;
 
     case 'CRM_Activity_Form_Search':
+    case 'CRM_Contact_Form_Search_Advanced':
       if ($form->elementExists('activity_role')) {
         $form->setDefaults(['activity_role' => 0]);
       }
