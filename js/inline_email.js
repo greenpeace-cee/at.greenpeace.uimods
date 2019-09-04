@@ -2,7 +2,7 @@ cj(document).ready(function () {
 
   var html = '' +
     '<span ' +
-    'class="fa fa-trash" ' +
+    'class="fa fa-exclamation" ' +
     'style="float:right;height:16px;width:16px;font-size:14px;color:#CB0001;" ' +
     'title="' + ts('Email on hold - generally due to bouncing.') + '"' +
     '></span>';
