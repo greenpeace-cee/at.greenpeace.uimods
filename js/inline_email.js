@@ -8,6 +8,9 @@ cj(document).ready(function () {
     '></span>';
 
   cj("#crm-email-content .crm-summary-row .crm-label").each(function(i, obj) {
+    if (typeof CRM.vars['uimods']['email'][i+1] == 'undefined') {
+      return;
+    }
     if (CRM.vars['uimods']['email'][i+1]['on_hold'] !== '0' && CRM.vars['uimods']['privacy']['do_not_email'] !== '0') {
       cj(obj).append(html);
     }
