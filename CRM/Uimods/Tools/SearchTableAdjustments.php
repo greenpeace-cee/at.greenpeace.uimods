@@ -132,7 +132,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
    */
   public static function adjustContributionTable($objectName, &$headers, &$rows, &$selector) {
     $campaign_colum = $payment_instrument_colum = $ba_column = $index = -1;
-    $isExistDonorColumn = false;
+    $isExistDonorHeader = false;
 
     foreach ($headers as $id => &$header) {
       $index += 1;
@@ -156,7 +156,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
           unset($header['sort']);
           unset($header['direction']);
           $ba_column = $index;
-          $isExistDonorColumn = true;
+          $isExistDonorHeader = true;
           break;
 
         default:
@@ -170,7 +170,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       }
     }
 
-    if (!$isExistDonorColumn) {
+    if (!$isExistDonorHeader) {
       $headers[] = [
         'name' => "Donor's BA",
         'field_name' => 'product_name',
