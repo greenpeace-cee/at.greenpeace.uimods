@@ -174,7 +174,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       $headers[] = [
         'name' => "Donor's BA",
         'field_name' => 'product_name',
-        'weight' => 65
+        'weight' => 56
       ];
     }
 
