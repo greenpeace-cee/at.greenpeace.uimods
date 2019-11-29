@@ -132,6 +132,8 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
    */
   public static function adjustContributionTable($objectName, &$headers, &$rows, &$selector) {
     $campaign_colum = $payment_instrument_colum = $ba_column = $index = -1;
+    $isExistDonorHeader = false;
+
     foreach ($headers as $id => &$header) {
       $index += 1;
       switch (CRM_Utils_Array::value('sort', $header)) {
@@ -154,6 +156,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
           unset($header['sort']);
           unset($header['direction']);
           $ba_column = $index;
+          $isExistDonorHeader = true;
           break;
 
         default:
@@ -165,6 +168,14 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       if ($id == 0 && !empty($header['desc'])) {
         unset($headers[0]);
       }
+    }
+
+    if (!$isExistDonorHeader) {
+      $headers[] = [
+        'name' => "Donor's BA",
+        'field_name' => 'product_name',
+        'weight' => 56
+      ];
     }
 
     // collect ids to be loaded

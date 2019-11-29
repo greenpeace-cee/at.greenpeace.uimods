@@ -51,7 +51,7 @@
 
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
-  <tr id="rowid{$row.contribution_id}" class="{cycle values="odd-row,even-row"}{if $row.cancel_date} cancelled{/if} crm-contribution_{$row.contribution_id}">
+  <tr id="rowid{$row.contribution_id}" class="{cycle values="odd-row,even-row"}{if $row.contribution_cancel_date} cancelled{/if} crm-contribution_{$row.contribution_id}">
     {if !$single }
         {if $context eq 'Search' }
           {assign var=cbName value=$row.checkbox}
@@ -78,8 +78,8 @@
     <td class="crm-contribution-payment_instrument">{$row.payment_instrument}</td>
     <td class="crm-contribution-status">
         {$row.contribution_status}<br />
-        {if $row.cancel_date}
-        {$row.cancel_date|crmDate}
+        {if $row.contribution_cancel_date}
+        {$row.contribution_cancel_date|crmDate}
         {/if}
     </td>
     <td class="crm-contribution-product_name">{$row.product_name}</td>
