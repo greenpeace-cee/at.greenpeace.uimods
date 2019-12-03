@@ -297,3 +297,18 @@ function uimods_civicrm_preProcess($formName, &$form) {
     }');
   }
 }
+
+/**
+ * Implements hook_civicrm_validateForm().
+ *
+ * @param string $formName
+ * @param array $fields
+ * @param array $files
+ * @param CRM_Core_Form $form
+ * @param array $errors
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_validateForm
+ */
+function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
+}

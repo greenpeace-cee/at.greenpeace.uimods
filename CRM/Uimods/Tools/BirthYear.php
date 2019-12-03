@@ -147,4 +147,36 @@ class CRM_Uimods_Tools_BirthYear {
     return self::$_birthyear_custom_field;
   }
 
+  /**
+   * Process validateForm hook
+   *
+   * @param $formName
+   * @param $fields
+   * @param $files
+   * @param $form
+   * @param $errors
+   */
+  public static function process_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+    if ($formName == 'CRM_Contact_Form_Contact') {
+      $birthYearField = self::getCustomField();
+      $birthYearElementName = $form->_groupTree[$birthYearField['custom_group_id']]['fields'][$birthYearField['id']]['element_name'];
+
+      if (empty($fields['birth_date'])) {
+        $contactBirthYear = '';
+      }
+      else {
+        try {
+          $contactBirthYear = (new DateTime($fields['birth_date']))->format('Y');
+        } catch (Exception $e) {
+          return;
+        }
+      }
+
+      if ($contactBirthYear != $fields[$birthYearElementName]) {
+        $errors[$birthYearElementName] = ts('The "Year of Birth" should be the same as year on "Birth Date" field');
+        $errors['birth_date'] = ts('The year of "Birth Date" field should be the same as "Year of Birth"');
+      }
+    }
+  }
+
 }
