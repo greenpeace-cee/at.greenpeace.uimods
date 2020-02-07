@@ -18,6 +18,8 @@ require_once 'uimods.civix.php';
  * Implements hook_civicrm_pre()
  */
 function uimods_civicrm_pre($op, $objectName, $id, &$params) {
+  CRM_Uimods_Tools_BirthYear::process_pre($op, $objectName, $id, $params);
+
   // GP-815: for newly created contacts:
   if ($op == 'create' && !$id && ($objectName == 'Individual' || $objectName == 'Organization')) {
     $preferredLanguage = civicrm_api3('Setting', 'GetValue', [
@@ -296,4 +298,19 @@ function uimods_civicrm_preProcess($formName, &$form) {
        background-color: #FFECEC !important;
     }');
   }
+}
+
+/**
+ * Implements hook_civicrm_validateForm().
+ *
+ * @param string $formName
+ * @param array $fields
+ * @param array $files
+ * @param CRM_Core_Form $form
+ * @param array $errors
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_validateForm
+ */
+function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
 }
