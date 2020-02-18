@@ -52,7 +52,6 @@ class CRM_Uimods_Tools_BirthYear {
 
     if ($objectRef instanceof CRM_Contact_DAO_Contact) {
       if (self::$_is_forbid_to_clear_birth_year) {
-        self::$_is_forbid_to_clear_birth_year = FALSE;
         return;
       }
 
