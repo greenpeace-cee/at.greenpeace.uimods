@@ -144,9 +144,19 @@ function uimods_civicrm_pageRun( &$page ) {
   }
 
   if ($page_name == 'CRM_Contact_Page_View_Summary' || $page_name == 'CRM_Contact_Page_Inline_Email') {
+    try {
+      $supportId = (int) civicrm_api3('LocationType', 'getvalue', [
+        'return' => 'id',
+        'name' => 'support',
+        'is_active' => 1,
+      ]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $supportId = NULL;
+    }
     CRM_Core_Resources::singleton()->addVars('uimods', array(
       'email' => $page->get_template_vars('email'),
-      'privacy' => $page->get_template_vars('privacy')
+      'privacy' => $page->get_template_vars('privacy'),
+      'supportId' => $supportId,
     ));
     CRM_Core_Region::instance('page-header')->add(array(
       'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/inline_email.js'),
