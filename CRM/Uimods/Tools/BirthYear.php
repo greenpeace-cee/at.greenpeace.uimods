@@ -38,7 +38,7 @@ class CRM_Uimods_Tools_BirthYear {
    */
   public static function process_pre($op, $objectName, $id, &$params) {
     if ($objectName == 'Individual') {
-      if (!array_key_exists('birth_date', $params) && !empty($params['id'])) {
+      if (!array_key_exists('birth_date', $params) && (!empty($params['id']) || !empty($params['contact_id']))) {
         self::$_is_forbid_to_clear_birth_year = TRUE;
       }
     }
@@ -52,7 +52,6 @@ class CRM_Uimods_Tools_BirthYear {
 
     if ($objectRef instanceof CRM_Contact_DAO_Contact) {
       if (self::$_is_forbid_to_clear_birth_year) {
-        self::$_is_forbid_to_clear_birth_year = FALSE;
         return;
       }
 
