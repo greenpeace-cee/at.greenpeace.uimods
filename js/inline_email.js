@@ -3,13 +3,13 @@ cj(document).ready(function () {
   var html = '' +
     '<span ' +
     'class="fa fa-exclamation" ' +
-    'style="float:right;height:16px;width:16px;font-size:14px;color:#CB0001;" ' +
+    'style="float:right;height:16px;padding:0 2px;font-size:14px;color:#CB0001;" ' +
     'title="' + ts('Email on hold - generally due to bouncing.') + '"' +
     '></span>';
   var supportIcon = '' +
     '<span ' +
     'class="fa fa-medkit" ' +
-    'style="float:right;height:16px;width:20px;font-size:14px;" ' +
+    'style="float:right;height:16px;padding:0 2px;font-size:14px;color:#0071be;" ' +
     'title="' + ts('This email address may only be used for support-related communication.') + '"' +
     '></span>';
 
