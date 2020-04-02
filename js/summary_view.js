@@ -48,9 +48,9 @@ function toggle_tags() {
   var tag_without_color = "#tags .crm-tag-item:not([style*='background-color'])";
 
   cj(tag_without_color).hide();
-  cj("#tagLink").append(
-    '<div id="show-all-tags" style="cursor:pointer;">' + ts('Show all tags') + '</div>' +
-    '<div id="show-colored-tags" style="display:none;cursor:pointer;">' + ts('Show colored tags') + '</div>'
+  cj("#tags").append(
+    '<div style="margin-top: 5px;"><a class="action-item crm-hover-button" id="show-all-tags"><i class="crm-i fa-expand"></i> <span>' + ts('Show all tags') + '</span></a>' +
+    '<a class="action-item crm-hover-button" id="show-colored-tags" style="display:none;"><i class="crm-i fa-compress"></i>  <span>' + ts('Show only important tags') + '</span></a></div>'
   );
 
   cj("#show-all-tags").click(function () {
