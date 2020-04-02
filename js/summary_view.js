@@ -41,11 +41,42 @@ function birthday_data_dependencies() {
   }
 }
 
+/**
+ * Toggle colored tags
+ */
+function toggle_tags() {
+  var tag_without_color = "#tags .crm-tag-item:not([style*='background-color'])";
+
+  cj(tag_without_color).hide();
+  cj("#tags").append(
+    '<div style="margin-top: 5px;"><a class="action-item crm-hover-button" id="show-all-tags"><i class="crm-i fa-expand"></i> <span>' + ts('Show all tags') + '</span></a>' +
+    '<a class="action-item crm-hover-button" id="show-colored-tags" style="display:none;"><i class="crm-i fa-compress"></i>  <span>' + ts('Show only important tags') + '</span></a></div>'
+  );
+
+  cj("#show-all-tags").click(function () {
+    cj(tag_without_color).show();
+    cj("#show-all-tags, #show-colored-tags").toggle();
+  });
+
+  cj("#show-colored-tags").click(function () {
+    cj(tag_without_color).hide();
+    cj("#show-all-tags, #show-colored-tags").toggle();
+  });
+
+  cj("#tags").bind('DOMSubtreeModified', function () {
+    if (cj("#show-all-tags").css('display') !== 'none') {
+      cj(tag_without_color).hide();
+    }
+  });
+}
+
 cj(document).ready(function () {
   // inject birthday dependencies
   birthday_data_dependencies();
 
   // inject data dependency after reload
   cj(document).bind("ajaxComplete", birthday_data_dependencies);
+
+  toggle_tags();
 });
 
