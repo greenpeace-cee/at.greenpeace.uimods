@@ -41,11 +41,42 @@ function birthday_data_dependencies() {
   }
 }
 
+/**
+ * Toggle colored tags
+ */
+function toggle_tags() {
+  var tag_without_color = "#tags .crm-tag-item:not([style*='background-color'])";
+
+  cj(tag_without_color).hide();
+  cj("#tagLink").append(
+    '<div id="show-all-tags" style="cursor:pointer;">' + ts('Show all tags') + '</div>' +
+    '<div id="show-colored-tags" style="display:none;cursor:pointer;">' + ts('Show colored tags') + '</div>'
+  );
+
+  cj("#show-all-tags").click(function () {
+    cj(tag_without_color).show();
+    cj("#show-all-tags, #show-colored-tags").toggle();
+  });
+
+  cj("#show-colored-tags").click(function () {
+    cj(tag_without_color).hide();
+    cj("#show-all-tags, #show-colored-tags").toggle();
+  });
+
+  cj("#tags").bind('DOMSubtreeModified', function () {
+    if (cj("#show-all-tags").css('display') !== 'none') {
+      cj(tag_without_color).hide();
+    }
+  });
+}
+
 cj(document).ready(function () {
   // inject birthday dependencies
   birthday_data_dependencies();
 
   // inject data dependency after reload
   cj(document).bind("ajaxComplete", birthday_data_dependencies);
+
+  toggle_tags();
 });
 
