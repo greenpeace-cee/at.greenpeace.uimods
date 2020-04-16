@@ -143,13 +143,37 @@ function uimods_civicrm_pageRun( &$page ) {
         ));
   }
 
-  if ($page_name == 'CRM_Contact_Page_View_Summary' || $page_name == 'CRM_Contact_Page_Inline_Email') {
-    CRM_Core_Resources::singleton()->addVars('uimods', array(
-      'email' => $page->get_template_vars('email'),
-      'privacy' => $page->get_template_vars('privacy')
-    ));
+  if (in_array($page_name, ['CRM_Contact_Page_View_Summary', 'CRM_Contact_Page_Inline_Email', 'CRM_Contact_Page_Inline_Phone'])) {
+    try {
+      $supportId = (int) civicrm_api3('LocationType', 'getvalue', [
+        'return' => 'id',
+        'name' => 'support',
+        'is_active' => 1,
+      ]);
+    } catch (CiviCRM_API3_Exception $e) {
+      $supportId = NULL;
+    }
+
+    $uimods = array(
+      'privacy' => $page->get_template_vars('privacy'),
+      'supportId' => $supportId,
+    );
+
+    if ($page_name == 'CRM_Contact_Page_Inline_Email') {
+      $uimods['email'] = $page->get_template_vars('email');
+      $uimods['form'] = 'email';
+    } elseif ($page_name == 'CRM_Contact_Page_Inline_Phone') {
+      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['form'] = 'phone';
+    } else {
+      $uimods['email'] = $page->get_template_vars('email');
+      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['form'] = 'both';
+    }
+
+    CRM_Core_Resources::singleton()->addVars('uimods', $uimods);
     CRM_Core_Region::instance('page-header')->add(array(
-      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/inline_email.js'),
+      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/handle_icons.js'),
     ));
   }
 }
