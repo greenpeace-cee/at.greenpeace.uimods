@@ -29,5 +29,5 @@ CRM.vars.hiddenCustomFields.forEach(function(field) {
 
 // hide matching rows by default
 CRM.$(function($) {
-  $('.toggle_equal_rows').click();
+  CRM.$('.toggle_equal_rows').click();
 });
