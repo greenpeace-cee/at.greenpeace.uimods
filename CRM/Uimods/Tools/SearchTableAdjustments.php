@@ -16,7 +16,7 @@
 // for contribution table
 define('UIMODS_STA_CAMPAIGN_FIELD',           'contribution_source');
 define('UIMODS_STA_PAYMENTINSTRUMENT_FIELD',  'payment_instrument');
-define('UIMODS_STA_BANKACCOUNT_FIELD',        'product_name');
+define('UIMODS_STA_BANKACCOUNT_FIELD',        'donor_ba');
 
 // for membership search table
 define('UIMODS_STA_MEMBERSHIPID_COLUMN',      6);
@@ -31,7 +31,7 @@ define('UIMODS_STA_CONTRACTNUMBER_FIELD',     'contract_number');
 class CRM_Uimods_Tools_SearchTableAdjustments {
 
   /**
-   * Modify the contribution search result table (GP-716)
+   * Modify the membership search result table (GP-716)
    */
   public static function adjustMembershipTable($objectName, &$headers, &$rows, &$selector) {
     // adjust headers
@@ -131,52 +131,35 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
    * Modify the contribution search result table (GP-716)
    */
   public static function adjustContributionTable($objectName, &$headers, &$rows, &$selector) {
-    $campaign_colum = $payment_instrument_colum = $ba_column = $index = -1;
     $isExistDonorHeader = false;
+    $donorBaWeight = 56;
 
     foreach ($headers as $id => &$header) {
-      $index += 1;
       switch (CRM_Utils_Array::value('sort', $header)) {
         case 'contribution_source':
           $header['name'] = "Campaign";
           unset($header['sort']);
           unset($header['direction']);
-          $campaign_colum = $index;
           break;
 
         case 'thankyou_date':
           $header['name'] = "Paid via";
           unset($header['sort']);
           unset($header['direction']);
-          $payment_instrument_colum = $index;
-          break;
-
-        case 'product_name':
-          $header['name'] = "Donor's BA";
-          unset($header['sort']);
-          unset($header['direction']);
-          $ba_column = $index;
-          $isExistDonorHeader = true;
+          $donorBaWeight = $header['weight'] + 1;
           break;
 
         default:
           break;
       }
-      // In Civi 4.6, the first column is used for the contact type icon, while
-      // Civi 4.7 renders this column as part of the template. To be compatible
-      // with both, we remove the column here and render it in UImodsSelector.tpl
-      if ($id == 0 && !empty($header['desc'])) {
-        unset($headers[0]);
-      }
     }
 
-    if (!$isExistDonorHeader) {
-      $headers[] = [
-        'name' => "Donor's BA",
-        'field_name' => 'product_name',
-        'weight' => 56
-      ];
-    }
+
+    $headers[] = [
+      'name' => "Donor's BA",
+      'field_name' => 'donor_ba',
+      'weight' => $donorBaWeight,
+    ];
 
     // collect ids to be loaded
     $contribution_ids = array();

@@ -76,13 +76,13 @@
     <td class="crm-contribution-source">{$row.contribution_source}</td>
     <td class="crm-contribution-receive_date">{$row.receive_date|crmDate}</td>
     <td class="crm-contribution-payment_instrument">{$row.payment_instrument}</td>
+    <td class="crm-contribution-donor_ba">{$row.donor_ba}</td>
     <td class="crm-contribution-status">
         {$row.contribution_status}<br />
         {if $row.contribution_cancel_date}
         {$row.contribution_cancel_date|crmDate}
         {/if}
     </td>
-    <td class="crm-contribution-product_name">{$row.product_name}</td>
     {if $softCreditColumns}
       <td class="crm-contribution-soft_credit_name"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contribution_soft_credit_contact_id`"}">{$row.contribution_soft_credit_name}</a></td>
       <td class="crm-contribution-soft_credit_type">{$row.contribution_soft_credit_type}</td>
