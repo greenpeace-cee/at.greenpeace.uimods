@@ -16,7 +16,12 @@
  * Class to render CiviBanking accounts
  */
 class CRM_Uimods_Tools_BankAccount {
-  
+
+  /**
+   * @var array
+   */
+  protected static $bank_account_reference_options = [];
+
   /**
    * passing the build_form hook
    */
@@ -44,6 +49,28 @@ class CRM_Uimods_Tools_BankAccount {
       if ($modified) {
         // write back if changed
         $form->assign('viewCustomData', $viewCustomData);
+      }
+    }
+
+    if ($formName == 'CRM_Custom_Form_CustomDataByType') {
+      $type = CRM_Utils_Request::retrieveValue('type', 'String');
+      if ($type == 'Contribution' && $form->getAction() == CRM_Core_Action::UPDATE) {
+        $to_ba_name = CRM_Uimods_Config::getOutgoingBAField() . '_' . $form->getVar('_entityId');
+        $from_ba_name = CRM_Uimods_Config::getIncomingBAField() . '_' . $form->getVar('_entityId');
+
+        if ($form->elementExists($to_ba_name)) {
+          $label = $form->getElement($to_ba_name)->getLabel();
+          $form->removeElement($to_ba_name);
+          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions()['all_domain_ibans'];
+          $form->add('select', $to_ba_name, $label, $options, FALSE, ['class' => 'crm-select2']);
+        }
+
+        if ($form->elementExists($from_ba_name)) {
+          $label = $form->getElement($from_ba_name)->getLabel();
+          $form->removeElement($from_ba_name);
+          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions()['all_ibans'];
+          $form->add('select', $from_ba_name, $label, $options, FALSE, ['class' => 'crm-select2',]);
+        }
       }
     }
   }
@@ -119,4 +146,39 @@ class CRM_Uimods_Tools_BankAccount {
       }
     }
   }
+
+  /**
+   * Get options of all IBANs and IBANs of default domain.
+   *
+   * @return array
+   */
+  public static function getBankAccountReferenceOptions() {
+    if (empty(self::$bank_account_reference_options)) {
+      $default_contact_id = (int) civicrm_api3('Domain', 'getvalue', [
+        'return' => 'contact_id',
+        'id' => CRM_Core_Config::domainID(),
+      ]);
+      $bar = civicrm_api3('BankingAccountReference', 'get', [
+        'api.BankingAccount.getcount' => [
+          'id' => '$value.ba_id',
+          'contact_id' => $default_contact_id,
+        ],
+      ]);
+      $options = [
+        'all_ibans' => [],
+        'all_domain_ibans' => []
+      ];
+
+      foreach ($bar['values'] as $value) {
+        $options['all_ibans'][$value['ba_id']] = $value['reference'];
+        if ($value['api.BankingAccount.getcount'] > 0) {
+          $options['all_domain_ibans'][$value['ba_id']] = $value['reference'];
+        }
+      }
+      self::$bank_account_reference_options = $options;
+    }
+
+    return self::$bank_account_reference_options;
+  }
+
 }

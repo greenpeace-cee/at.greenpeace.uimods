@@ -26,6 +26,7 @@ class CRM_Uimods_Config {
   protected static $singleton = NULL;
   protected static $extended_demographics_group = NULL;
   protected static $incoming_ba_field = NULL;
+  protected static $outgoing_ba_field = NULL;
   protected static $membership_annual_field = NULL;
   protected static $membership_frequency_field = NULL;
   protected static $membership_payment_instrument_field = NULL;
@@ -120,6 +121,21 @@ class CRM_Uimods_Config {
         'custom_group_id' => 'contribution_information'));
     }
     return 'custom_' . self::$incoming_ba_field;
+  }
+
+  /**
+   * Get the custom_xx field name for the contribution's outgoing bank account
+   *
+   * @return string custom_xx
+   */
+  public static function getOutgoingBAField() {
+    if (self::$outgoing_ba_field === NULL) {
+      self::$outgoing_ba_field = civicrm_api3('CustomField', 'getvalue', array(
+        'return'          => 'id',
+        'name'            => 'to_ba',
+        'custom_group_id' => 'contribution_information'));
+    }
+    return 'custom_' . self::$outgoing_ba_field;
   }
 
   /**
