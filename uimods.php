@@ -338,3 +338,29 @@ function uimods_civicrm_preProcess($formName, &$form) {
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
 }
+
+/**
+ * Implementation of hook_civicrm_alterReportVar.
+ *
+ * @param $varType
+ * @param $var
+ * @param $reportForm
+ *
+ * @throws \CRM_Core_Exception
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterReportVar
+ */
+function uimods_civicrm_alterReportVar($varType, &$var, $reportForm) {
+  if (CRM_Utils_Request::retrieve('revert', 'Boolean') && !CRM_Core_Permission::check('administer CiviCRM')) {
+    CRM_Core_Session::setStatus(ts('You do not have permission to revert changes.'), ts('Permission Denied'), 'error');
+    if ($cid = $reportForm->getVar('cid')) {
+      if ($oid = $reportForm->getVar('oid')) {
+        CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/merge', "reset=1&cid={$cid}&oid={$oid}", FALSE, NULL, FALSE));
+      } else {
+        CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contact/view', "reset=1&selectedChild=log&cid={$cid}", FALSE, NULL, FALSE));
+      }
+    } else {
+      CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl($reportForm->getVar('summary'), 'reset=1', FALSE, TRUE));
+    }
+  }
+}
