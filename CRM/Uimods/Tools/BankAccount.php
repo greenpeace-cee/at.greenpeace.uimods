@@ -53,22 +53,38 @@ class CRM_Uimods_Tools_BankAccount {
     }
 
     if ($formName == 'CRM_Custom_Form_CustomDataByType') {
-      $type = CRM_Utils_Request::retrieveValue('type', 'String');
-      if ($type == 'Contribution' && $form->getAction() == CRM_Core_Action::UPDATE) {
-        $to_ba_name = CRM_Uimods_Config::getOutgoingBAField() . '_' . $form->getVar('_entityId');
-        $from_ba_name = CRM_Uimods_Config::getIncomingBAField() . '_' . $form->getVar('_entityId');
+      if ($form->getVar('_type') == 'Contribution' && $form->getAction() == CRM_Core_Action::UPDATE) {
+        $to_ba_name = $from_ba_name = '';
+        foreach ($form->getVar('_groupTree') as $group) {
+          if ($group['name'] != 'contribution_information') {
+            continue;
+          }
+          foreach ($group['fields'] as $field) {
+            if ($field['name'] == 'to_ba') {
+              $to_ba_name = $field['element_name'];
+            }
+            if ($field['name'] == 'from_ba') {
+              $from_ba_name = $field['element_name'];
+            }
+          }
+        }
+
+        $contact_id = civicrm_api3('Contribution', 'getvalue', [
+          'return' => 'contact_id',
+          'id' => $form->getVar('_entityId'),
+        ]);
 
         if ($form->elementExists($to_ba_name)) {
           $label = $form->getElement($to_ba_name)->getLabel();
           $form->removeElement($to_ba_name);
-          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions()['all_domain_ibans'];
+          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions($contact_id)['all_domain_ibans'];
           $form->add('select', $to_ba_name, $label, $options, FALSE, ['class' => 'crm-select2']);
         }
 
         if ($form->elementExists($from_ba_name)) {
           $label = $form->getElement($from_ba_name)->getLabel();
           $form->removeElement($from_ba_name);
-          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions()['all_ibans'];
+          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions($contact_id)['all_ibans'];
           $form->add('select', $from_ba_name, $label, $options, FALSE, ['class' => 'crm-select2',]);
         }
       }
@@ -150,18 +166,24 @@ class CRM_Uimods_Tools_BankAccount {
   /**
    * Get options of all IBANs and IBANs of default domain.
    *
+   * @param $contact_id
+   *
    * @return array
+   * @throws \CiviCRM_API3_Exception
    */
-  public static function getBankAccountReferenceOptions() {
+  public static function getBankAccountReferenceOptions($contact_id) {
     if (empty(self::$bank_account_reference_options)) {
       $default_contact_id = (int) civicrm_api3('Domain', 'getvalue', [
         'return' => 'contact_id',
         'id' => CRM_Core_Config::domainID(),
       ]);
-      $bar = civicrm_api3('BankingAccountReference', 'get', [
-        'api.BankingAccount.getcount' => [
-          'id' => '$value.ba_id',
-          'contact_id' => $default_contact_id,
+      $bar = civicrm_api3('BankingAccount', 'get', [
+        'return' => ['ba_id', 'contact_id'],
+        'contact_id' => ['IN' => [$contact_id, $default_contact_id]],
+        'options' => ['limit' => 0],
+        'api.BankingAccountReference.getsingle' => [
+          'return' => ['reference'],
+          'ba_id' => '$value.id',
         ],
       ]);
       $options = [
@@ -170,9 +192,11 @@ class CRM_Uimods_Tools_BankAccount {
       ];
 
       foreach ($bar['values'] as $value) {
-        $options['all_ibans'][$value['ba_id']] = $value['reference'];
-        if ($value['api.BankingAccount.getcount'] > 0) {
-          $options['all_domain_ibans'][$value['ba_id']] = $value['reference'];
+        $reference = $value['api.BankingAccountReference.getsingle']['reference'];
+        if ($value['contact_id'] == $default_contact_id) {
+          $options['all_domain_ibans'][$value['id']] = $reference;
+        } else {
+          $options['all_ibans'][$value['id']] = $reference;
         }
       }
       self::$bank_account_reference_options = $options;
