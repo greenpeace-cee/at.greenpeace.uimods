@@ -52,8 +52,14 @@ class CRM_Uimods_Tools_BankAccount {
       }
     }
 
+    if ($formName == 'CRM_Contribute_Form_Contribution' && $form->getAction() == CRM_Core_Action::ADD) {
+      CRM_Core_Session::singleton()->set('_contactID', $form->getVar('_contactID'), 'uimod');
+    }
+
     if ($formName == 'CRM_Custom_Form_CustomDataByType') {
-      if ($form->getVar('_type') == 'Contribution' && $form->getAction() == CRM_Core_Action::UPDATE) {
+      if ($form->getVar('_type') == 'Contribution'
+        && ($form->getAction() == CRM_Core_Action::UPDATE || $form->getAction() == CRM_Core_Action::ADD)
+      ) {
         $to_ba_name = $from_ba_name = '';
         foreach ($form->getVar('_groupTree') as $group) {
           if ($group['name'] != 'contribution_information') {
@@ -69,23 +75,29 @@ class CRM_Uimods_Tools_BankAccount {
           }
         }
 
-        $contact_id = civicrm_api3('Contribution', 'getvalue', [
-          'return' => 'contact_id',
-          'id' => $form->getVar('_entityId'),
-        ]);
+        if (!empty($form->getVar('_entityId'))) {
+          $contact_id = civicrm_api3('Contribution', 'getvalue', [
+            'return' => 'contact_id',
+            'id' => $form->getVar('_entityId'),
+          ]);
+        } else {
+          $session = CRM_Core_Session::singleton();
+          $contact_id = $session->get('_contactID', 'uimod');
+          $session->resetScope('uimod');
+        }
 
         if ($form->elementExists($to_ba_name)) {
           $label = $form->getElement($to_ba_name)->getLabel();
           $form->removeElement($to_ba_name);
-          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions($contact_id)['all_domain_ibans'];
-          $form->add('select', $to_ba_name, $label, $options, FALSE, ['class' => 'crm-select2']);
+          $options = self::getBankAccountReferenceOptions($contact_id)['all_domain_ibans'];
+          $form->add('select', $to_ba_name, $label, $options, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- none -'),]);
         }
 
         if ($form->elementExists($from_ba_name)) {
           $label = $form->getElement($from_ba_name)->getLabel();
           $form->removeElement($from_ba_name);
-          $options = ['' => ts('-- please select --')] + self::getBankAccountReferenceOptions($contact_id)['all_ibans'];
-          $form->add('select', $from_ba_name, $label, $options, FALSE, ['class' => 'crm-select2',]);
+          $options = self::getBankAccountReferenceOptions($contact_id)['all_ibans'];
+          $form->add('select', $from_ba_name, $label, $options, FALSE, ['class' => 'crm-select2', 'placeholder' => ts('- none -'),]);
         }
       }
     }
