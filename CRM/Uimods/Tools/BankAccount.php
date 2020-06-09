@@ -26,7 +26,7 @@ class CRM_Uimods_Tools_BankAccount {
    * passing the build_form hook
    */
   public static function renderForm($formName, &$form) {
-    if (  $formName == 'CRM_Contribute_Form_ContributionView'
+    if ($formName == 'CRM_Contribute_Form_ContributionView'
        || $formName == 'CRM_Activity_Form_Activity') {
       $viewCustomData = $form->get_template_vars('viewCustomData');
       // $contact_id = self::getContactID($form);
@@ -52,15 +52,13 @@ class CRM_Uimods_Tools_BankAccount {
       }
     }
 
-    if ($formName == 'CRM_Contribute_Form_Contribution' && $form->getAction() == CRM_Core_Action::ADD) {
-      CRM_Core_Session::singleton()->set('_contactID', $form->getVar('_contactID'), 'uimod');
-    }
-
     if ($formName == 'CRM_Custom_Form_CustomDataByType') {
       if ($form->getVar('_type') == 'Contribution'
         && ($form->getAction() == CRM_Core_Action::UPDATE || $form->getAction() == CRM_Core_Action::ADD)
       ) {
         $to_ba_name = $from_ba_name = '';
+        $contact_id = NULL;
+
         foreach ($form->getVar('_groupTree') as $group) {
           if ($group['name'] != 'contribution_information') {
             continue;
@@ -80,10 +78,9 @@ class CRM_Uimods_Tools_BankAccount {
             'return' => 'contact_id',
             'id' => $form->getVar('_entityId'),
           ]);
-        } else {
-          $session = CRM_Core_Session::singleton();
-          $contact_id = $session->get('_contactID', 'uimod');
-          $session->resetScope('uimod');
+        } elseif (!empty($_SERVER['HTTP_REFERER'])) {
+          parse_str(parse_url($_SERVER['HTTP_REFERER'], PHP_URL_QUERY), $output);
+          $contact_id = $output['cid'];
         }
 
         if ($form->elementExists($to_ba_name)) {
