@@ -186,22 +186,18 @@ class CRM_Uimods_Tools_BankAccount {
         'return' => 'contact_id',
         'id' => CRM_Core_Config::domainID(),
       ]);
-      $bar = civicrm_api3('BankingAccount', 'get', [
-        'return' => ['ba_id', 'contact_id'],
+      $ba = civicrm_api3('BankingAccount', 'get', [
+        'return' => ['contact_id'],
         'contact_id' => ['IN' => [$contact_id, $default_contact_id]],
         'options' => ['limit' => 0],
-        'api.BankingAccountReference.getsingle' => [
-          'return' => ['reference'],
-          'ba_id' => '$value.id',
-        ],
       ]);
       $options = [
         'all_ibans' => [],
         'all_domain_ibans' => []
       ];
 
-      foreach ($bar['values'] as $value) {
-        $reference = $value['api.BankingAccountReference.getsingle']['reference'];
+      foreach ($ba['values'] as $value) {
+        $reference = self::getPrimaryBankAccountReference($value['id']);
         if ($value['contact_id'] == $default_contact_id) {
           $options['all_domain_ibans'][$value['id']] = $reference;
         } else {
