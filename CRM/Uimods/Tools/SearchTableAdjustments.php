@@ -25,6 +25,15 @@ define('UIMODS_STA_MEMBERSHIPPAYMENT_COLUMN', 8);
 define('UIMODS_STA_MEMBERSHIPPAYMENT_FIELD',  'payment_mode');
 define('UIMODS_STA_CONTRACTNUMBER_FIELD',     'contract_number');
 
+define(
+  'UIMODS_STA_MEMBERSHIPPAYMENT_EFT_WARNING_ICON',
+  '<i'
+  . ' class="crm-i fa-exclamation-triangle"'
+  . ' style="color:red"'
+  . ' title="Daueraufträge können nicht von GP storniert werden sondern nur vom Spender persönlich oder via Telebanking bei seiner kontoführenden Bank!"'
+  . '></i>'
+);
+
 /**
  * Keep birth_date and birth year in sync
  */
@@ -327,12 +336,18 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
         if (!empty($membership[$pi_field]) && !empty($payment_instruments[$membership[$pi_field]])) {
           $payment_instrument = $payment_instruments[$membership[$pi_field]];
           $payment_mode .= " ({$payment_instrument})";
+
+          if ($payment_instrument == "EFT") {
+            // Insert placeholder to avoid whitespace replacement inside the HTML tag
+            $payment_mode .= " %EFTWarningIcon";
+          }
         }
         $payment_mode .= "<br/>(";
         $payment_mode .= CRM_Utils_Money::format($annual_amount/$frequency, $currency);
         $payment_mode .= " {$payment_frequencies[$frequency]})";
       }
       $payment_mode = str_replace(' ', '&nbsp;', $payment_mode); // avoid linebreaks
+      $payment_mode = str_replace("%EFTWarningIcon", UIMODS_STA_MEMBERSHIPPAYMENT_EFT_WARNING_ICON, $payment_mode);
       $payment_modes[$membership['id']] = $payment_mode;
     }
 
