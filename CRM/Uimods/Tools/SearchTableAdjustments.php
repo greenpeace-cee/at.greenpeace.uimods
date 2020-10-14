@@ -25,15 +25,6 @@ define('UIMODS_STA_MEMBERSHIPPAYMENT_COLUMN', 8);
 define('UIMODS_STA_MEMBERSHIPPAYMENT_FIELD',  'payment_mode');
 define('UIMODS_STA_CONTRACTNUMBER_FIELD',     'contract_number');
 
-define(
-  'UIMODS_STA_MEMBERSHIPPAYMENT_EFT_WARNING_ICON',
-  '<i'
-  . ' class="crm-i fa-exclamation-triangle"'
-  . ' style="color:red"'
-  . ' title="Daueraufträge können nicht von GP storniert werden sondern nur vom Spender persönlich oder via Telebanking bei seiner kontoführenden Bank!"'
-  . '></i>'
-);
-
 /**
  * Keep birth_date and birth year in sync
  */
@@ -330,6 +321,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       }
 
       $annual_amount = $membership[$annual_field];
+      $includeEFTWarningIcon = FALSE;
       $payment_mode = CRM_Utils_Money::format($annual_amount, $currency);
       if (!empty($membership[$frequency_field]) && $membership[$frequency_field] >= 1) {
         $frequency     = $membership[$frequency_field];
@@ -338,8 +330,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
           $payment_mode .= " ({$payment_instrument})";
 
           if ($payment_instrument == "EFT") {
-            // Insert placeholder to avoid whitespace replacement inside the HTML tag
-            $payment_mode .= " %EFTWarningIcon";
+            $includeEFTWarningIcon = TRUE;
           }
         }
         $payment_mode .= "<br/>(";
@@ -347,8 +338,20 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
         $payment_mode .= " {$payment_frequencies[$frequency]})";
       }
       $payment_mode = str_replace(' ', '&nbsp;', $payment_mode); // avoid linebreaks
-      $payment_mode = str_replace("%EFTWarningIcon", UIMODS_STA_MEMBERSHIPPAYMENT_EFT_WARNING_ICON, $payment_mode);
-      $payment_modes[$membership['id']] = $payment_mode;
+
+      if ($includeEFTWarningIcon) {
+        $payment_modes[$membership['id']] =
+          "<div style=\"display:flex;align-items:center;flex-direction:row;flex-wrap:wrap;\">"
+          . "<span>$payment_mode</span>"
+          . "<i"
+          . " class=\"crm-i fa-exclamation-triangle\""
+          . " style=\"color:red;font-size:2em;margin-left:15px\""
+          . " title=\"Daueraufträge können nicht von GP storniert werden sondern nur vom Spender persönlich oder via Telebanking bei seiner kontoführenden Bank!\""
+          . "></i>"
+          . "</div>";
+      } else {
+        $payment_modes[$membership['id']] = $payment_mode;
+      }
     }
 
     return $payment_modes;
