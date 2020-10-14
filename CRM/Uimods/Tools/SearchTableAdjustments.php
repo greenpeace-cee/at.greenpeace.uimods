@@ -346,7 +346,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
           . "<i"
           . " class=\"crm-i fa-exclamation-triangle\""
           . " style=\"color:red;font-size:2em;margin-left:15px\""
-          . " title=\"Daueraufträge können nicht von GP storniert werden sondern nur vom Spender persönlich oder via Telebanking bei seiner kontoführenden Bank!\""
+          . " title=\"EFT standing orders cannot be cancelled by Greenpeace, but need to be cancelled by the donor by contacting their bank or via online banking.\""
           . "></i>"
           . "</div>";
       } else {
