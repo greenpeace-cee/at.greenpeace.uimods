@@ -321,19 +321,37 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       }
 
       $annual_amount = $membership[$annual_field];
+      $includeEFTWarningIcon = FALSE;
       $payment_mode = CRM_Utils_Money::format($annual_amount, $currency);
       if (!empty($membership[$frequency_field]) && $membership[$frequency_field] >= 1) {
         $frequency     = $membership[$frequency_field];
         if (!empty($membership[$pi_field]) && !empty($payment_instruments[$membership[$pi_field]])) {
           $payment_instrument = $payment_instruments[$membership[$pi_field]];
           $payment_mode .= " ({$payment_instrument})";
+
+          if ($payment_instrument == "EFT") {
+            $includeEFTWarningIcon = TRUE;
+          }
         }
         $payment_mode .= "<br/>(";
         $payment_mode .= CRM_Utils_Money::format($annual_amount/$frequency, $currency);
         $payment_mode .= " {$payment_frequencies[$frequency]})";
       }
       $payment_mode = str_replace(' ', '&nbsp;', $payment_mode); // avoid linebreaks
-      $payment_modes[$membership['id']] = $payment_mode;
+
+      if ($includeEFTWarningIcon) {
+        $payment_modes[$membership['id']] =
+          "<div style=\"display:flex;align-items:center;flex-direction:row;flex-wrap:wrap;\">"
+          . "<span>$payment_mode</span>"
+          . "<i"
+          . " class=\"crm-i fa-exclamation-triangle\""
+          . " style=\"color:red;font-size:2em;margin-left:15px\""
+          . " title=\"EFT standing orders cannot be cancelled by Greenpeace, but need to be cancelled by the donor by contacting their bank or via online banking.\""
+          . "></i>"
+          . "</div>";
+      } else {
+        $payment_modes[$membership['id']] = $payment_mode;
+      }
     }
 
     return $payment_modes;
