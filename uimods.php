@@ -60,6 +60,8 @@ function uimods_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selecto
     CRM_Uimods_Tools_SearchTableAdjustments::adjustContributionTable($objectName, $headers, $rows, $selector);
   } elseif ($objectName == 'membership') {
     CRM_Uimods_Tools_SearchTableAdjustments::adjustMembershipTable($objectName, $headers, $rows, $selector);
+  } elseif ($objectName == 'event') {
+    CRM_Uimods_Tools_SearchTableAdjustments::adjustEventTable($objectName, $headers, $rows, $selector);
   }
 }
 

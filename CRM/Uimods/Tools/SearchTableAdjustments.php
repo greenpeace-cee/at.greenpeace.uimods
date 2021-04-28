@@ -379,5 +379,31 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
     }
     return $baId2reference;
   }
-}
 
+  /**
+   * Modify the events search result table
+   */
+  public static function adjustEventTable($objectName, &$headers, &$rows, &$selector) {
+    foreach ($rows as $key => $row) {
+      // add primary email address to name GP-16672
+      try {
+        $query = \Civi\Api4\Email::get()
+          ->addSelect('email')
+          ->addWhere('contact_id', '=', $row['contact_id'])
+          ->addWhere('is_primary', '=', TRUE)
+          ->setLimit(1);
+        $result = $query
+          ->setCheckPermissions(FALSE)
+          ->execute()
+          ->first();
+        // avoid duplicate (if contact has no name, primary email is set as display name)
+        if (isset($result['email']) && $result['email'] != $row['sort_name']) {
+          $rows[$key]['sort_name'] .= '<br />' . $result['email'];
+        }
+      } catch (Exception $e) {
+        Civi::log()->warning("CRM_Uimods_Tools_SearchTableAdjustments@adjustEventTable: " . $e->getMessage());
+      }
+    }
+  }
+
+}
