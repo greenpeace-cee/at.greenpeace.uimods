@@ -398,7 +398,7 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
           ->first();
         // avoid duplicate (if contact has no name, primary email is set as display name)
         if (isset($result['email']) && $result['email'] != $row['sort_name']) {
-          $rows[$key]['sort_name'] .= '&nbsp;&lt;' . $result['email'] . '&gt;';
+          $rows[$key]['sort_name'] .= '<br />' . $result['email'];
         }
       } catch (Exception $e) {
         Civi::log()->warning("CRM_Uimods_Tools_SearchTableAdjustments@adjustEventTable: " . $e->getMessage());
