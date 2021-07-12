@@ -73,15 +73,17 @@
             <div class="solid-border-top">
               <br /><label>{ts 1=$displayName}Recurring Contributions{/ts}</label>
             </div>
-            {include file="CRM/Contribute/Page/ContributionRecur.tpl"}
+            {include file="CRM/Contribute/Page/UimodsContributionRecur.tpl"}
           {else}
             <div class="crm-block crm-contact-contribute-recur">
+              <br />
               <h3>{ts}Active Recurring Contributions{/ts}</h3>
-              {include file="CRM/Contribute/Page/ContributionRecur.tpl" recurRows=$activeRecurRows}
+              {include file="CRM/Contribute/Page/UimodsContributionRecur.tpl" recurRows=$activeRecurRows}
             </div>
             <div class="crm-block crm-contact-contribute-recur">
+              <br />
               <h3>{ts}Inactive Recurring Contributions{/ts}</h3>
-              {include file="CRM/Contribute/Page/ContributionRecur.tpl" recurRows=$inactiveRecurRows}
+              {include file="CRM/Contribute/Page/UimodsContributionRecur.tpl" recurRows=$inactiveRecurRows}
             </div>
           {/if}
         {/if}
