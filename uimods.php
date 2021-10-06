@@ -129,6 +129,11 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
         CRM_Core_Smarty::singleton()->assign('resultFile', 'CRM/Contribute/Form/UimodsSelector.tpl');
       }
     }
+
+  // EVENTS
+  } elseif ($tplName == 'CRM/Event/Page/ManageEvent.tpl') {
+    // modified version based on CiviCRM 5.37
+    $tplName = 'CRM/Event/Page/UimodsManageEvent.tpl';
   }
 }
 
