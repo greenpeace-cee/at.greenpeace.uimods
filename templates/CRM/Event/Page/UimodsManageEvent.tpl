@@ -61,7 +61,7 @@
                           <a href="{crmURL p='civicrm/event/info' q="id=`$row.id`&reset=1"}"
                              title="{ts}View event info page{/ts}" class="bold">{$row.title}</a>&nbsp;&nbsp;({ts}ID:{/ts} {$row.id})<br/>
                           *}
-                          <a href="{crmURL p='civicrm/event/manage/settings' q="id=`$row.id`&reset=1"}"
+                          <a href="{crmURL p='civicrm/event/manage/settings' q="id=`$row.id`&action=update&reset=1"}"
                              title="{ts}Info and Settings{/ts}" class="bold">{$row.title}</a>&nbsp;&nbsp;({ts}ID:{/ts} {$row.id})<br/>
                           <span><b>{$row.repeat}</b></span>
                         </td>
