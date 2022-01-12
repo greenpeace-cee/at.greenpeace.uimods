@@ -74,7 +74,16 @@
     {/if}
     <td class="crm-contribution-type crm-contribution-type_{$row.financial_type_id} crm-financial-type crm-financial-type_{$row.financial_type_id}">{$row.financial_type}</td>
     <td class="crm-contribution-source">{$row.contribution_source}</td>
-    <td class="crm-contribution-receive_date">{$row.receive_date|crmDate}</td>
+    <td class="crm-contribution-receive_date">{$row.receive_date|crmDate}
+      {* GP-22895 show revenue recognition date below contribution receive date *}
+      {if !empty($row.revenue_recognition_date)}
+      <br>
+      <span title="Revenue Date for BMF">
+        <i class="crm-i fa-info-circle"></i>
+        &nbsp;{$row.revenue_recognition_date|crmDate}
+      </span>
+      {/if}
+    </td>
     <td class="crm-contribution-payment_instrument">{$row.payment_instrument}</td>
     <td class="crm-contribution-donor_ba">{$row.donor_ba}</td>
     <td class="crm-contribution-status">

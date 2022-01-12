@@ -279,6 +279,14 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       } else {
         $row[UIMODS_STA_PAYMENTINSTRUMENT_FIELD] = '';
       }
+
+      // GP-22895 show revenue recognition date below contribution receive date
+      $revenue_date = 'revenue_recognition_date';
+      $revenue_api = civicrm_api3('Contribution', 'get', array(
+        'return'  => $revenue_date,
+        'id'      => $contribution_id
+      ));
+      $row[$revenue_date] = $revenue_api['values'][$contribution_id][$revenue_date] ?? null;
     }
   }
 
