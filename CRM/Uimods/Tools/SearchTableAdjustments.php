@@ -178,12 +178,13 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
 
     // load the data missing in the rows as we get it
     $incoming_ba_field = CRM_Uimods_Config::getIncomingBAField();
+    // load also revenue recognition date (GP-22895)
+    $revenue_date = 'revenue_recognition_date';
     $missing_data = civicrm_api3('Contribution', 'get', array(
-      'return'  => "id,payment_instrument_id,{$incoming_ba_field}",
+      'return'  => "id,payment_instrument_id,{$incoming_ba_field},{$revenue_date}",
       'id'      => array('IN' => $contribution_ids),
       'options' => array('limit' => 0),
       ));
-
     // load assignment to memberships
     $contribution2membership = array();
     $membership_payments = civicrm_api3('MembershipPayment', 'get', array(
@@ -279,6 +280,9 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
       } else {
         $row[UIMODS_STA_PAYMENTINSTRUMENT_FIELD] = '';
       }
+
+      // GP-22895 revenue recognition date below contribution receive date (loaded in missing data api)
+      $row[$revenue_date] = $missing_data['values'][$contribution_id][$revenue_date] ?? null;
     }
   }
 
