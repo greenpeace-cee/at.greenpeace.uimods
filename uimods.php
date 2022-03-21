@@ -12,6 +12,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4\UimodsToken;
+
 require_once 'uimods.civix.php';
 
 /**
@@ -312,6 +314,17 @@ function uimods_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
+ * Implements hook_civicrm_entityTypes().
+ *
+ * Declare entity types provided by this module.
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+ */
+function uimods_civicrm_entityTypes(&$entityTypes) {
+  _uimods_civix_civicrm_entityTypes($entityTypes);
+}
+
+/**
  * Implements hook_civicrm_preProcess().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
@@ -368,6 +381,30 @@ function uimods_civicrm_alterReportVar($varType, &$var, $reportForm) {
       }
     } else {
       CRM_Utils_System::redirect(CRM_Report_Utils_Report::getNextUrl($reportForm->getVar('summary'), 'reset=1', FALSE, TRUE));
+    }
+  }
+}
+
+function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
+  if (isset($tokens['uimods']) && !empty(Civi::settings()->get('at_greenpeace_uimods_token_sql_task_id'))) {
+    foreach ($cids as $cid) {
+      try {
+        civicrm_api3('Sqltask', 'execute', [
+          'id' => Civi::settings()->get('at_greenpeace_uimods_token_sql_task_id'),
+          'input_val' => json_encode(['contact_id' => $cid]),
+          'log_to_file' => 1,
+        ]);
+        $uimodsTokens = UimodsToken::get(FALSE)
+          ->addSelect('tokens')
+          ->addWhere('contact_id', '=', $cid)
+          ->execute()
+          ->first();
+        foreach ($uimodsTokens['tokens'] ?? [] as $key => $value) {
+          $values[$cid]['uimods.' . $key] = $value;
+        }
+      } catch (Exception $e) {
+        Civi::log()->warning("[UIMods] Encountered error while calculating tokens for contact {$cid}: {$e->getMessage()}");
+      }
     }
   }
 }
