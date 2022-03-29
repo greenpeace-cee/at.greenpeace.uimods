@@ -21,6 +21,9 @@
     <ver>5.39</ver>
   </compatibility>
   <comments/>
+  <classloader>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
   <civix>
     <namespace>CRM/Uimods</namespace>
   </civix>

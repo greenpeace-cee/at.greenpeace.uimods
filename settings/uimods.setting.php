@@ -38,4 +38,15 @@ return array(
     'is_contact' => 0,
     'description' => 'Default preferred language for new contacts',
   ),
+  'at_greenpeace_uimods_token_sql_task_id' => array(
+    'group_name' => 'GP UIMods',
+    'group' => 'at_greenpeace_uimods',
+    'name' => 'at_greenpeace_uimods_token_sql_task_id',
+    'type' => 'integer',
+    'default' => NULL,
+    'add' => '4.6',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'SQL Task called to generate contact tokens',
+  ),
  );
