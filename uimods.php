@@ -145,11 +145,24 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
 function uimods_civicrm_pageRun( &$page ) {
   $page_name = $page->getVar('_name');
   if ($page_name == 'CRM_Contact_Page_View_Summary') {
-      $script = file_get_contents(__DIR__ . '/js/summary_view.js');
-      $script = str_replace('EXTENDED_DEMOGRAPHICS', CRM_Uimods_Config::getExtendedDemographicsGroupID(), $script);
-      CRM_Core_Region::instance('page-header')->add(array(
-        'script' => $script,
-        ));
+
+    // $emailIdsMap - it is hack to get email id by index of array
+    // because in the core template doesn't use email id :(
+    $emailIdsMap = [];
+    $smarty = CRM_Core_Smarty::singleton();
+    $emails = $smarty->get_template_vars('email');
+    foreach ($emails as $key => $email) {
+      $emailIdsMap[$key] =  $email['id'];
+    }
+    CRM_Core_Resources::singleton()->addVars('emailIdsMap', $emailIdsMap);
+    CRM_Core_Region::instance('page-header')->add([
+      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/add_create_supportcase_links.js'),
+    ]);
+    CRM_Core_Resources::singleton()->addStyleFile('at.greenpeace.uimods', 'css/viewContactSummary.css');
+
+    $script = file_get_contents(__DIR__ . '/js/summary_view.js');
+    $script = str_replace('EXTENDED_DEMOGRAPHICS', CRM_Uimods_Config::getExtendedDemographicsGroupID(), $script);
+    CRM_Core_Region::instance('page-header')->add(['script' => $script]);
   }
 
   if (in_array($page_name, ['CRM_Contact_Page_View_Summary', 'CRM_Contact_Page_Inline_Email', 'CRM_Contact_Page_Inline_Phone'])) {

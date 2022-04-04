@@ -1,0 +1,12 @@
+
+.uimod__send-email-button {
+    color: #0071bd !important;
+    background: white !important;
+    border-radius: 2px;
+    padding: 2px 5px;
+}
+
+.uimod__send-email-button:hover {
+    color: white !important;
+    background: #0071bd !important;
+}
