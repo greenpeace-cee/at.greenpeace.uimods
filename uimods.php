@@ -421,3 +421,21 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
     }
   }
 }
+
+function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
+  if ($type == 'sqls') {
+    // remove UPDATE against civicrm_uimods_token as it would fail due to
+    // the unique index on contact_id
+    $data = array_filter($data, function($sql) {
+      return strpos($sql, 'UPDATE civicrm_uimods_token') === FALSE;
+    });
+    // delete tokens for both records - they are re-created on demand anyway
+    $data[] = CRM_Core_DAO::composeQuery(
+      'DELETE FROM civicrm_uimods_token WHERE contact_id IN (%1, %2)',
+      [
+        1 => [$mainId, 'Integer'],
+        2 => [$otherId, 'Integer']
+      ]
+    );
+  }
+}
