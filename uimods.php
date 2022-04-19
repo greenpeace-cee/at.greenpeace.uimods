@@ -421,3 +421,14 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
     }
   }
 }
+
+/**
+ * Implements uimods_civicrm_apiWrappers()
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_apiWrappers/
+ */
+function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'Contact' && $apiRequest['action'] == 'getquick') {
+    $wrappers[] = new CRM_Uimods_ContactGetQuickApiWrapper();
+  }
+}
