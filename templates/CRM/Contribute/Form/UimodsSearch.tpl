@@ -35,21 +35,28 @@
         {strip}
           <table class="form-layout">
             <tr>
-              <td class="font-size12pt" colspan="2">                    {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
+              <td>{$form.buttons.html}</td>
+            </tr>
+            <tr>
+              <td class="font-size12pt" colspan="2">
+                <label>{$form.sort_name.label}</label><br />
+                {$form.sort_name.html|crmAddClass:'twenty'}
               </td>
             </tr>
             <tr>
               {if $form.contact_tags}
-                <td><label>{ts}Contributor Tag(s){/ts}</label>
-                    {$form.contact_tags.html}
+                <td>
+                  <label>{ts}Contributor Tag(s){/ts}</label><br />
+                  {$form.contact_tags.html}
                 </td>
               {else}
                 <td>&nbsp;</td>
               {/if}
 
               {if $form.group}
-                <td><label>{ts}Contributor Group(s){/ts}</label>
-                    {$form.group.html}
+                <td>
+                  <label>{ts}Contributor Group(s){/ts}</label><br />
+                  {$form.group.html}
                 </td>
               {else}
                 <td>&nbsp;</td>
