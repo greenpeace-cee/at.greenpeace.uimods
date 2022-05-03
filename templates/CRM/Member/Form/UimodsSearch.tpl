@@ -32,9 +32,13 @@
   {strip}
        <table class="form-layout">
           <tr>
-              <td class="font-size12pt" colspan="2">
-                  {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmAddClass:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
-              </td>
+            <td>{$form.buttons.html}</td>
+          </tr>
+          <tr>
+            <td class="font-size12pt" colspan="2">
+              <label>{$form.sort_name.label}</label><br />
+              {$form.sort_name.html|crmAddClass:'twenty'}
+            </td>
           </tr>
 
           {include file="CRM/Member/Form/Search/Common.tpl"}
