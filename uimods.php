@@ -434,6 +434,17 @@ function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 }
 
 function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
+  if ($type == 'form') {
+    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
+    $mergeContact->setMergeInformation($data['migration_info']);
+  }
+
+  if ($type == 'sqls') {
+    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
+    $mergeContact->postMergeFixEmails();
+    $mergeContact->postMergeFixPhones();
+  }
+
   if ($type == 'sqls') {
     // remove UPDATE against civicrm_uimods_token as it would fail due to
     // the unique index on contact_id
