@@ -54,7 +54,7 @@
             {if $accessContribution and $newCredit}
                 <a accesskey="N" href="{$newCreditURL}" class="button"><span><div class="icon ui-icon-circle-plus"></div>{ts}Submit Credit Card Membership{/ts}</span></a><br /><br />
             {else}
-                <br/ ><br/ >
+                <br /><br />
             {/if}
         </div>
     {/if}
