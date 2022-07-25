@@ -17,8 +17,8 @@ function _civicrm_api3_greenpeace_message_template_send_spec(&$spec) {
     'api.required' => 1
   ];
 
-  $spec['to_emails'] = [
-    'name'         => 'to_emails',
+  $spec['to_email'] = [
+    'name'         => 'to_email',
     'title'        => 'To Emails (comma separated list)',
     'type'         => CRM_Utils_Type::T_STRING,
     'api.required' => 1
@@ -45,15 +45,14 @@ function civicrm_api3_greenpeace_message_template_send($params) {
   ];
 
   try {
-    $emails = explode(",", $params['to_emails']);
+    $emails = explode(",", $params['to_email']);
     foreach ($emails as $email) {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $return_values['invalid'][] = $email;
       } else {
-        $message_template = civicrm_api3('MessageTemplate', 'send', [
-          'id' => $params['id'],
-          'to_email' => $email
-        ]);
+        // override single email in params
+        $params['to_email'] = $email;
+        civicrm_api3('MessageTemplate', 'send', $params);
         $return_values['valid'][] = $email;
       }
     }
