@@ -370,6 +370,7 @@ function uimods_civicrm_preProcess($formName, &$form) {
  */
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
+  CRM_Uimods_Tools_DialogerId::processValidateForm($formName, $fields, $files, $form, $errors);
 }
 
 /**
