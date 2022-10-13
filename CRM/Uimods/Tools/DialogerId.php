@@ -12,11 +12,15 @@ class CRM_Uimods_Tools_DialogerId {
    * @param $errors
    */
   public static function processValidateForm($formName, &$fields, &$files, &$form, &$errors) {
-    if ($formName !== 'CRM_Contact_Form_Contact') {
+    if (!in_array($formName, ['CRM_Contact_Form_Inline_CustomData', 'CRM_Contact_Form_Contact'])) {
       return;
     }
 
     if (!in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])) {
+      return;
+    }
+
+    if ($form->getAction() === CRM_Core_Action::ADD && $formName === 'CRM_Contact_Form_Inline_CustomData') {
       return;
     }
 
@@ -53,6 +57,10 @@ class CRM_Uimods_Tools_DialogerId {
     if ($form->getAction() === CRM_Core_Action::UPDATE) {
       $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $form);
       if (empty($contactId)) {
+        return;
+      }
+
+      if (count($contactsWithSameDialogerId) === 1 && $contactsWithSameDialogerId[0]['id'] === $contactId) {
         return;
       }
     }
