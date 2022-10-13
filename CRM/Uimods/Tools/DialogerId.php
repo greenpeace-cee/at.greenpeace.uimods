@@ -65,7 +65,7 @@ class CRM_Uimods_Tools_DialogerId {
       }
     }
 
-    $errorMessage = '<br>The filed isn\'t unique. The same value has contacts: ';
+    $errorMessage = 'Dialoger ID must be unique. It is currently in use by the following contact: ';
     $linkStyles = 'display: block; color: #0071bd; background: rgba(255, 255, 255, 0);padding: 5px 0';
     $errorMessage .= '<ul>';
     foreach ($contactsWithSameDialogerId as $contact) {
@@ -73,7 +73,7 @@ class CRM_Uimods_Tools_DialogerId {
       $isCurrentContact = $form->getAction() === CRM_Core_Action::UPDATE && $contact['id'] === $contactId;
       $link = CRM_Utils_System::url('civicrm/contact/view', "reset=1&amp;cid={$contact['id']}");
       $errorMessage .= '<a style="' . $linkStyles . '" href="' . $link . '">';
-      $errorMessage .= $contact['display_name'] . '(id=' . $contact['id'] . ($isCurrentContact ? ', current contact' : '') . ');';
+      $errorMessage .= $contact['display_name'] . ' (ID ' . $contact['id'] . ($isCurrentContact ? ', current contact' : '') . ');';
       $errorMessage .= '</a>';
       $errorMessage .= '</li>';
     }
