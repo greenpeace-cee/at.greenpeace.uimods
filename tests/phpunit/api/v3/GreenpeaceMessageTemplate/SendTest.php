@@ -46,7 +46,7 @@ class api_v3_GreenpeaceMessageTemplate_SendTest extends \PHPUnit\Framework\TestC
   public function testInvalidEmail() {
     $result = civicrm_api3('GreenpeaceMessageTemplate', 'send', [
       'id' => 1,
-      'to_emails' => 'abc123'
+      'to_email' => 'abc123'
     ]);
     $this->assertEquals('abc123', $result['values']['invalid'][0]);
   }
@@ -57,7 +57,7 @@ class api_v3_GreenpeaceMessageTemplate_SendTest extends \PHPUnit\Framework\TestC
   public function testValidEmail() {
     $result = civicrm_api3('GreenpeaceMessageTemplate', 'send', [
       'id' => 1,
-      'to_emails' => 'abc123@test.com'
+      'to_email' => 'abc123@test.com'
     ]);
     $this->assertEquals('abc123@test.com', $result['values']['valid'][0]);
   }
@@ -69,14 +69,16 @@ class api_v3_GreenpeaceMessageTemplate_SendTest extends \PHPUnit\Framework\TestC
     $emails = [
       'abc123@test.com',
       'xyz123@test.com',
-      'test@gmail.com'
+      'test@gmail.com',
+      ' space@example.com',
     ];
     $result = civicrm_api3('GreenpeaceMessageTemplate', 'send', [
       'id' => 1,
-      'to_emails' => implode(',', $emails)
+      'to_email' => implode(',', $emails)
     ]);
     $this->assertEquals($emails[0], $result['values']['valid'][0]);
     $this->assertEquals($emails[1], $result['values']['valid'][1]);
     $this->assertEquals($emails[2], $result['values']['valid'][2]);
+    $this->assertEquals(trim($emails[3]), $result['values']['valid'][3]);
   }
 }
