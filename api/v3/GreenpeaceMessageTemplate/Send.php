@@ -47,6 +47,7 @@ function civicrm_api3_greenpeace_message_template_send($params) {
   try {
     $emails = explode(",", $params['to_email']);
     foreach ($emails as $email) {
+      $email = trim($email);
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $return_values['invalid'][] = $email;
       } else {
