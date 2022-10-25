@@ -26,8 +26,7 @@ class CRM_Uimods_Tools_BankAccount {
    * passing the build_form hook
    */
   public static function renderForm($formName, &$form) {
-    if ($formName == 'CRM_Contribute_Form_ContributionView'
-       || $formName == 'CRM_Activity_Form_Activity') {
+    if ($formName == 'CRM_Contribute_Form_ContributionView') {
       $viewCustomData = $form->get_template_vars('viewCustomData');
       // $contact_id = self::getContactID($form);
       $modified = FALSE;
