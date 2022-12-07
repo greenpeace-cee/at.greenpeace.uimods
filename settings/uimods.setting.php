@@ -15,8 +15,8 @@
 /*
 * Settings metadata file
 */
-return array(
-  'at_greenpeace_uimods_config' => array(
+return [
+  'at_greenpeace_uimods_config' => [
     'group_name' => 'GP UIMods',
     'group' => 'at_greenpeace_uimods',
     'name' => 'at_greenpeace_uimods_config',
@@ -26,8 +26,8 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'Stored information on custom fields',
-  ),
-  'at_greenpeace_uimods_preferred_language' => array(
+  ],
+  'at_greenpeace_uimods_preferred_language' => [
     'group_name' => 'GP UIMods',
     'group' => 'at_greenpeace_uimods',
     'name' => 'at_greenpeace_uimods_preferred_language',
@@ -37,8 +37,8 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'Default preferred language for new contacts',
-  ),
-  'at_greenpeace_uimods_token_sql_task_id' => array(
+  ],
+  'at_greenpeace_uimods_token_sql_task_id' => [
     'group_name' => 'GP UIMods',
     'group' => 'at_greenpeace_uimods',
     'name' => 'at_greenpeace_uimods_token_sql_task_id',
@@ -48,5 +48,27 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'SQL Task called to generate contact tokens',
-  ),
- );
+  ],
+  'at_greenpeace_uimods_sms_default_location_type_id' => [
+    'group_name' => 'GP UIMods',
+    'group' => 'at_greenpeace_uimods',
+    'name' => 'at_greenpeace_uimods_sms_default_location_type_id',
+    'type' => 'integer',
+    'default' => NULL,
+    'add' => '4.6',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Default location type for new phone numbers generated from inbound SMS',
+  ],
+  'at_greenpeace_uimods_sms_discard_unknown_sender' => [
+    'group_name' => 'GP UIMods',
+    'group' => 'at_greenpeace_uimods',
+    'name' => 'at_greenpeace_uimods_sms_discard_unknown_sender',
+    'type' => 'Boolean',
+    'default' => FALSE,
+    'add' => '4.6',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Discard SMS from unknown sender?',
+  ],
+ ];
