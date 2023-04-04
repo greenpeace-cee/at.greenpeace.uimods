@@ -207,6 +207,17 @@ function uimods_civicrm_pageRun( &$page ) {
  */
 function uimods_civicrm_config(&$config) {
   _uimods_civix_civicrm_config($config);
+  // register replacement hooks and let them run as early as possible
+  Civi::dispatcher()->addListener(
+    'hook_civicrm_pre',
+    'CRM_Uimods_Sms_Listener::pre',
+    PHP_INT_MAX - 1
+  );
+  Civi::dispatcher()->addListener(
+    'hook_civicrm_inboundSMS',
+    'CRM_Uimods_Sms_Listener::inboundSMS',
+    PHP_INT_MAX - 1
+  );
 }
 
 /**
