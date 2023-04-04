@@ -5,7 +5,7 @@ use Civi\Api4\Phone;
 use Civi\Core\Event\GenericHookEvent;
 use Civi\Core\Event\PreEvent;
 
-class CRM_Uimods_Sms_Listener {
+class CRM_Uimods_SMS_Listener {
 
   public static array $newPhones = [];
 

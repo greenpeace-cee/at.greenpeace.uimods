@@ -210,12 +210,12 @@ function uimods_civicrm_config(&$config) {
   // register replacement hooks and let them run as early as possible
   Civi::dispatcher()->addListener(
     'hook_civicrm_pre',
-    'CRM_Uimods_Sms_Listener::pre',
+    'CRM_Uimods_SMS_Listener::pre',
     PHP_INT_MAX - 1
   );
   Civi::dispatcher()->addListener(
     'hook_civicrm_inboundSMS',
-    'CRM_Uimods_Sms_Listener::inboundSMS',
+    'CRM_Uimods_SMS_Listener::inboundSMS',
     PHP_INT_MAX - 1
   );
 }
