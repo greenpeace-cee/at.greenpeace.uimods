@@ -13,6 +13,8 @@
 +--------------------------------------------------------*/
 
 use Civi\Api4\UimodsToken;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\Resource\FileResource;
 
 require_once 'uimods.civix.php';
 
@@ -218,6 +220,13 @@ function uimods_civicrm_config(&$config) {
     'CRM_Uimods_SMS_Listener::inboundSMS',
     PHP_INT_MAX - 1
   );
+}
+
+function uimods_civicrm_container(ContainerBuilder $container) {
+  $container->addResource(new FileResource(__FILE__));
+  $container->findDefinition('dispatcher')->addMethodCall('addListener',
+    ['civi.token.eval', ['\Civi\Uimods\EvaluateTokens', 'run']]
+  )->setPublic(TRUE);
 }
 
 /**
