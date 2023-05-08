@@ -61,7 +61,7 @@ class CRM_Uimods_SMS_Listener {
   public static function getOrCreateContact($phone) {
     $contact = Phone::get()
       ->addSelect('contact_id')
-      ->addWhere('phone', '=', $phone)
+      ->addWhere('phone_numeric', '=', preg_replace('/[^0-9x]/', '', $phone))
       ->addWhere('contact_id.is_deleted', '=', FALSE)
       ->addOrderBy('contact_id', 'ASC')
       ->setCheckPermissions(FALSE)
