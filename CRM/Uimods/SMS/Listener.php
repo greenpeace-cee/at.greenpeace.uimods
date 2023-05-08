@@ -76,6 +76,7 @@ class CRM_Uimods_SMS_Listener {
       if (\Civi::settings()->get('at_greenpeace_uimods_sms_discard_unknown_sender')) {
         // we don't really have a good way to "discard" SMS from this hook
         // other than to just ... exit.
+        Civi::log()->info('Discarding SMS from unknown sender: ' . $phone);
         CRM_Utils_System::civiExit();
       }
       // we want to process inbound SMS from unknown numbers. create a contact
