@@ -55,10 +55,15 @@ class CRM_Uimods_SMS_Listener {
     if (empty($userId)) {
       $session->set('userID', $message->fromContactID);
     }
-    $message->toContactID = self::getOrCreateContact($message->to);
+    if (!empty($message->to)) {
+      $newToContactId = self::getOrCreateContact($message->to, TRUE);
+      if (!empty($newToContactId)) {
+        $message->toContactID = $newToContactId;
+      }
+    }
   }
 
-  public static function getOrCreateContact($phone) {
+  public static function getOrCreateContact($phone, $ignoreDiscard = FALSE) {
     $contact = Phone::get()
       ->addSelect('contact_id')
       ->addWhere('phone_numeric', '=', preg_replace('/[^0-9x]/', '', $phone))
@@ -73,7 +78,7 @@ class CRM_Uimods_SMS_Listener {
       return $contact['contact_id'];
     }
     else {
-      if (\Civi::settings()->get('at_greenpeace_uimods_sms_discard_unknown_sender')) {
+      if (\Civi::settings()->get('at_greenpeace_uimods_sms_discard_unknown_sender') && !$ignoreDiscard) {
         // we don't really have a good way to "discard" SMS from this hook
         // other than to just ... exit.
         Civi::log()->info('Discarding SMS from unknown sender: ' . $phone);
