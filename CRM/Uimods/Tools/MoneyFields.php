@@ -20,8 +20,8 @@ class CRM_Uimods_Tools_MoneyFields {
       foreach ($fieldRules as $fieldRule) {
         if (!empty($fieldRule['type']) && $fieldRule['type'] === 'money' && isset($fields[$fieldName])) {
           $fieldValue = $fields[$fieldName];
-          if (CRM_Uimods_Tools_String::isStringContains(',', $fieldValue)) {
-            $errors[$fieldName] = 'The "," symbol is invalid. Use "." instead of ",".';
+          if (!empty($fieldValue) && !preg_match('/^\d+' . preg_quote(\Civi::settings()->get('monetaryDecimalPoint')) . '?\d?\d?$/', $fieldValue)) {
+            $errors[$fieldName] = 'Please use the format "1234' . \Civi::settings()->get('monetaryDecimalPoint') . '56".';
           }
         }
       }
