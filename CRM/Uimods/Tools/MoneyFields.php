@@ -43,7 +43,7 @@ class CRM_Uimods_Tools_MoneyFields {
     foreach ($form->_rules as $fieldName => $fieldRules) {
       foreach ($fieldRules as $fieldRule) {
         if (!empty($fieldRule['type']) && $fieldRule['type'] === 'money') {
-          $monetaryDecimalPoint = \Civi::settings()->get('monetaryDecimalPoint');
+          $monetaryDecimalPoint = \Civi::settings()->get('monetaryThousandSeparator');
 
           if ($form->elementExists($fieldName)) {
             $element = $form->getElement($fieldName);
