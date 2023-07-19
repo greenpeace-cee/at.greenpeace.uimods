@@ -76,6 +76,7 @@ function uimods_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selecto
  */
 function uimods_civicrm_buildForm($formName, &$form) {
   // hook in the various renderers
+  CRM_Uimods_Tools_MoneyFields::processBuildForm($formName, $form);
   CRM_Uimods_Tools_BankAccount::renderForm($formName, $form);
   CRM_Uimods_Tools_BirthYear::process_buildForm($formName, $form);
   switch ($formName) {

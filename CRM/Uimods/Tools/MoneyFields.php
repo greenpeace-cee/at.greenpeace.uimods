@@ -28,4 +28,32 @@ class CRM_Uimods_Tools_MoneyFields {
     }
   }
 
+  /**
+   * Process BuildForm hook
+   *
+   * @param $formName
+   * @param $form
+   * @return void
+   */
+  public static function processBuildForm($formName, &$form) {
+    if (empty($formName) || empty($form)) {
+      return;
+    }
+
+    foreach ($form->_rules as $fieldName => $fieldRules) {
+      foreach ($fieldRules as $fieldRule) {
+        if (!empty($fieldRule['type']) && $fieldRule['type'] === 'money') {
+          $monetaryDecimalPoint = \Civi::settings()->get('monetaryDecimalPoint');
+
+          if ($form->elementExists($fieldName)) {
+            $element = $form->getElement($fieldName);
+            $value = $element->getValue();
+            $cleanValue = str_replace($monetaryDecimalPoint, "", $value);
+            $element->setValue($cleanValue);
+          }
+        }
+      }
+    }
+  }
+
 }
