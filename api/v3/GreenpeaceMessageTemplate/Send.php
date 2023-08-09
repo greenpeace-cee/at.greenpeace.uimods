@@ -46,16 +46,33 @@ function civicrm_api3_greenpeace_message_template_send($params) {
 
   try {
     $emails = explode(",", $params['to_email']);
+
     foreach ($emails as $email) {
-      $email = trim($email);
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $return_values['invalid'][] = $email;
       } else {
-        // override single email in params
-        $params['to_email'] = $email;
-        civicrm_api3('MessageTemplate', 'send', $params);
         $return_values['valid'][] = $email;
       }
+    }
+
+    if (count($return_values['valid']) > 0) {
+      $toEmail = '';
+      $ccEmails = [];
+      $emailNumber = 1;
+
+      foreach ($return_values['valid'] as $validEmail) {
+        if ($emailNumber === 1) {
+          $toEmail = trim($validEmail);
+        } else {
+          $ccEmails[] = trim($validEmail);
+        }
+        $emailNumber++;
+      }
+
+      civicrm_api3('MessageTemplate', 'send', array_merge($params, [
+        'cc' => implode(',', $ccEmails),
+        'to_email' => $toEmail
+      ]));
     }
   } catch (CiviCRM_API3_Exception $e) {
     throw new API_Exception('MessageTemplate send failed: ', $e->getMessage());
