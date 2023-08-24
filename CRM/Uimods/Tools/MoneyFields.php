@@ -20,7 +20,7 @@ class CRM_Uimods_Tools_MoneyFields {
       foreach ($fieldRules as $fieldRule) {
         if (!empty($fieldRule['type']) && $fieldRule['type'] === 'money' && isset($fields[$fieldName])) {
           $fieldValue = $fields[$fieldName];
-          if (!empty($fieldValue) && !preg_match('/^\d+' . preg_quote(\Civi::settings()->get('monetaryDecimalPoint')) . '?\d?\d?$/', $fieldValue)) {
+          if (!empty($fieldValue) && !preg_match('/^\-?\d+' . preg_quote(\Civi::settings()->get('monetaryDecimalPoint')) . '?\d?\d?$/', $fieldValue)) {
             $errors[$fieldName] = 'Please use the format "1234' . \Civi::settings()->get('monetaryDecimalPoint') . '56".';
           }
         }
