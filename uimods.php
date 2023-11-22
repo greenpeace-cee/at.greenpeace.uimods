@@ -109,8 +109,14 @@ function uimods_civicrm_buildForm($formName, &$form) {
 function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
 
   // MEMBERSHIPS:
-  // modified version based on CiviCRM 4.6.22    SHA1: 152779bfc8fb9e3cffcc3ed903673bbc4a773ee7
-  // also replaced CRM/Member/Form/Selector.tpl: SHA1: e91bc448a67142258d27fb1deef05284f0a25aa6
+  // modified version based on CiviCRM 6.63.3
+  // Replaced core files:
+  //  at.greenpeace.uimods/templates/CRM/Member/Form/Selector_Civi_5_63.tpl
+  //  at.greenpeace.uimods/templates/CRM/Member/Form/Search_Civi_5_63.tpl
+  //
+  // Uimods files:
+  //  at.greenpeace.uimods/templates/CRM/Member/Form/UimodsSelector.tpl
+  //  at.greenpeace.uimods/templates/CRM/Member/Form/UimodsSearch.tpl
   if ($tplName == 'CRM/Member/Form/Search.tpl') {
     $tplName = 'CRM/Member/Form/UimodsSearch.tpl';
   }

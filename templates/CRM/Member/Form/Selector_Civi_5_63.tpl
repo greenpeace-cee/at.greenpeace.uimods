@@ -50,7 +50,6 @@
     <td class="crm-membership-start_date">{$row.membership_start_date|truncate:10:''|crmDate}</td>
     <td class="crm-membership-end_date">{$row.membership_end_date|truncate:10:''|crmDate}</td>
     <td class="crm-membership-source">{$row.membership_source}</td>
-    <td class="crm-membership-source"><code>{$row.membership_id}</code></td>
     <td class="crm-membership-status crm-membership-status_{$row.membership_status}">{$row.membership_status}</td>
     <td class="crm-membership-auto_renew">
       {if $row.auto_renew eq 1}
@@ -59,7 +58,6 @@
         <i class="crm-i fa-ban" aria-hidden="true" title="{ts}Auto-renew error{/ts}"></i>
       {/if}
     </td>
-    <td class="crm-membership-payment_mode">{$row.payment_mode}</td>
     <td>
         {$row.action|replace:'xx':$row.membership_id}
         {if $row.owner_membership_id}
