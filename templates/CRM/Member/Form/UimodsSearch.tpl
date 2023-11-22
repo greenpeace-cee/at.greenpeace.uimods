@@ -44,7 +44,7 @@
 
          {* This section displays the rows along and includes the paging controls *}
              <div id ="memberSearch" class="crm-search-results">
-             {include file="CRM/Member/Form/Selector.tpl" context="Search"}
+             {include file="CRM/Member/Form/UimodsSelector.tpl" context="Search"}
              </div>
       {* END Actions/Results section *}
   </div>
