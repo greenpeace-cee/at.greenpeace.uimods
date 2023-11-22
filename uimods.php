@@ -107,25 +107,33 @@ function uimods_civicrm_buildForm($formName, &$form) {
  *  3) try to apply (patch) the original files and copy to extension
  */
 function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
-  // MEMBERSHIPS
-  if ($tplName == 'CRM/Member/Form/Search.tpl') {
-    // modified version based on CiviCRM 4.6.22     SHA1: 152779bfc8fb9e3cffcc3ed903673bbc4a773ee7
-    //  also replaced CRM/Member/Form/Selector.tpl: SHA1: e91bc448a67142258d27fb1deef05284f0a25aa6
-    $tplName = 'CRM/Member/Form/UimodsSearch.tpl';
-  } elseif ($tplName == 'CRM/Member/Page/Tab.tpl') {
-    CRM_Uimods_Tools_SearchTableAdjustments::adjustMembershipTableSmarty();
-    // modified version based on CiviCRM 4.6.22 -   SHA1: fa69538de32175029221af5583c25b3c607b5c22
-    $tplName = 'CRM/Member/Page/UimodsTab.tpl';
 
-  // CONTRIBUTIONS
-  } elseif ($tplName == 'CRM/Contribute/Form/Search.tpl') {
-    // modified version based on CiviCRM 4.6.22 -       SHA1: b885eb162c82557ed87535a7b940397492af12e4
-    //  also replaced CRM/Contribute/Form/Selector.tpl: SHA1: 70ecb4911dfd57f685be1048f11feb3463d850de
+  // MEMBERSHIPS:
+  // modified version based on CiviCRM 4.6.22    SHA1: 152779bfc8fb9e3cffcc3ed903673bbc4a773ee7
+  // also replaced CRM/Member/Form/Selector.tpl: SHA1: e91bc448a67142258d27fb1deef05284f0a25aa6
+  if ($tplName == 'CRM/Member/Form/Search.tpl') {
+    $tplName = 'CRM/Member/Form/UimodsSearch.tpl';
+  }
+
+  // modified version based on CiviCRM 4.6.22 -   SHA1: fa69538de32175029221af5583c25b3c607b5c22
+  if ($tplName == 'CRM/Member/Page/Tab.tpl') {
+    CRM_Uimods_Tools_SearchTableAdjustments::adjustMembershipTableSmarty();
+    $tplName = 'CRM/Member/Page/UimodsTab.tpl';
+  }
+
+  // CONTRIBUTIONS:
+  // modified version based on CiviCRM 4.6.22 -       SHA1: b885eb162c82557ed87535a7b940397492af12e4
+  // also replaced CRM/Contribute/Form/Selector.tpl:  SHA1: 70ecb4911dfd57f685be1048f11feb3463d850de
+  if ($tplName == 'CRM/Contribute/Form/Search.tpl') {
     $tplName = 'CRM/Contribute/Form/UimodsSearch.tpl';
-  } elseif ($tplName == 'CRM/Contribute/Page/Tab.tpl') {
-    // modified version based on CiviCRM 4.6.22         SHA1: 9f82712218a9a19aabfc0906c4afbcd6faf19ee7
+  }
+
+  // modified version based on CiviCRM 4.6.22         SHA1: 9f82712218a9a19aabfc0906c4afbcd6faf19ee7
+  if ($tplName == 'CRM/Contribute/Page/Tab.tpl') {
     $tplName = 'CRM/Contribute/Page/UimodsTab.tpl';
-  } elseif ($tplName == 'CRM/Contact/Form/Search/Advanced.tpl') {
+  }
+
+  if ($tplName == 'CRM/Contact/Form/Search/Advanced.tpl') {
     if (isset($form->_submitValues['component_mode'])
       && $form->_submitValues['component_mode'] == CRM_Contact_BAO_Query::MODE_CONTRIBUTE) {
       $modeValue = $form->getVar('_modeValue');
@@ -134,10 +142,11 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
         CRM_Core_Smarty::singleton()->assign('resultFile', 'CRM/Contribute/Form/UimodsSelector.tpl');
       }
     }
+  }
 
-  // EVENTS
-  } elseif ($tplName == 'CRM/Event/Page/ManageEvent.tpl') {
-    // modified version based on CiviCRM 5.37
+  // EVENTS:
+  // modified version based on CiviCRM 5.37
+  if ($tplName == 'CRM/Event/Page/ManageEvent.tpl') {
     $tplName = 'CRM/Event/Page/UimodsManageEvent.tpl';
   }
 }
