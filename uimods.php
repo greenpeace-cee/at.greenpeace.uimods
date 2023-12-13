@@ -484,3 +484,16 @@ function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $t
     );
   }
 }
+
+function uimods_civicrm_summaryActions(&$actions, $contactID) {
+  // add "open document with single contact" action
+  $actions['uimods_open_document_with_single_contact'] = [
+    'ref'         => 'uimods-civioffice-render-single',
+    'title'       => ts('GP: Create CiviOffice document'),
+    'weight'      => -120,
+    'key'         => 'uimods_open_document_with_single_contact',
+    'class'       => 'medium-popup',
+    'href'        => CRM_Utils_System::url('civicrm/uimods/document-from-single-contact', "reset=1"),
+    'permissions' => ['access CiviOffice']
+  ];
+}

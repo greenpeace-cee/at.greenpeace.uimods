@@ -6,6 +6,13 @@ use CRM_Uimods_ExtensionUtil as E;
  */
 class CRM_Uimods_Upgrader extends CRM_Uimods_Upgrader_Base {
 
+  /**
+   * Runs after extension is installed
+   */
+  public function onPostInstall() {
+    CRM_Uimods_Utils_WysiwygPreset::install();
+  }
+
   public function upgrade_0162() {
     $this->ctx->log->info('Applying update 0162');
     CRM_Core_DAO::executeQuery("
@@ -22,6 +29,12 @@ class CRM_Uimods_Upgrader extends CRM_Uimods_Upgrader_Base {
     );
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
+    return TRUE;
+  }
+
+  public function upgrade_0163() {
+    CRM_Uimods_Utils_WysiwygPreset::install();
+
     return TRUE;
   }
 
