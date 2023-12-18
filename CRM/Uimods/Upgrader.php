@@ -33,6 +33,7 @@ class CRM_Uimods_Upgrader extends CRM_Uimods_Upgrader_Base {
   }
 
   public function upgrade_0163() {
+    $this->ctx->log->info('Applying update 0163. Install wysiwyg presets.');
     CRM_Uimods_Utils_WysiwygPreset::install();
 
     return TRUE;
