@@ -65,6 +65,8 @@
       initUimodsLiveTemplate();
 
       function initUimodsLiveTemplate() {
+        var onHide = function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)};
+        var onShow = function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')};
         var templateParams = {
           'scopeName' :'DocumentFromSingleContact',
           'targetElement' : $('#document_uri'),
@@ -75,32 +77,32 @@
             {
               'id' : 'activity_type_id',
               'type' : 'select2',
-              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+              'onHide' : onHide,
+              'onShow' : onShow,
             },
             {
               'id' : 'document_renderer_uri',
               'type' : 'select2',
-              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+              'onHide' : onHide,
+              'onShow' : onShow,
             },
             {
               'id' : 'target_mime_type',
               'type' : 'select2',
-              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+              'onHide' : onHide,
+              'onShow' : onShow,
             },
             {
               'id' : 'activity_subject',
               'type' : 'textInput',
-              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+              'onHide' : onHide,
+              'onShow' : onShow,
             },
             {
               'id' : 'activity_attach_doc',
               'type' : 'checkbox',
-              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+              'onHide' : onHide,
+              'onShow' : onShow,
             },
           ]
         };
@@ -110,8 +112,8 @@
           templateParams.applyToFields.push({
             'type' : 'wysiwygElement',
             'id' : fieldId,
-            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)},
-            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'visible').css('height', 'auto')},
+            'onHide' : onHide,
+            'onShow' : onShow,
           });
         });
 
