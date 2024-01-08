@@ -39,4 +39,31 @@ class CRM_Uimods_Upgrader extends CRM_Uimods_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_0164() {
+    $this->ctx->log->info('Applying update 0164. Install civicrm_uimods_template table.');
+
+    CRM_Core_DAO::executeQuery("
+      CREATE TABLE `civicrm_uimods_template` (
+        `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique ApiLog ID',
+        `scope_name` varchar(60) NOT NULL COMMENT 'Scope name of template',
+        `target_value` varchar(100) NOT NULL COMMENT 'Target value',
+        `field_name` varchar(100) NOT NULL COMMENT 'Field name',
+        `field_value` longtext DEFAULT NULL COMMENT 'Field value',
+        `field_type` varchar(30) NOT NULL COMMENT 'Field type',
+        `is_field_hidden` tinyint NOT NULL COMMENT 'Is field hidden?',
+        `contact_id` int unsigned COMMENT 'FK to Contact',
+        `updated_at` datetime NOT NULL DEFAULT NOW() COMMENT 'Updated at date',
+        `created_at` datetime NOT NULL DEFAULT NOW() COMMENT 'Created at date',
+        PRIMARY KEY (`id`),
+        CONSTRAINT FK_civicrm_uimods_template_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
+      )
+      ENGINE=InnoDB;
+    ");
+
+    $logging = new CRM_Logging_Schema();
+    $logging->fixSchemaDifferences();
+
+    return TRUE;
+  }
+
 }

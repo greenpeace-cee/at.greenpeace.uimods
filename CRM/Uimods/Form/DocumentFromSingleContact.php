@@ -38,48 +38,12 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
     ];
     $this->setAttribute('data-no-ajax-submit', 'true');
 
-    $this->add(
-      'select',
-      'document_renderer_uri',
-      E::ts("Document Renderer"),
-      CRM_Uimods_Utils_Civioffice::getDocumentRendererList(),
-      true,
-      ['class' => 'crm-select2 huge']
-    );
-
-    $this->add(
-      'select2',
-      'document_uri',
-      E::ts("Document"),
-      CRM_Uimods_Utils_Civioffice::getDocumentList(),
-      true,
-      [
-        'class' => 'huge',
-        'placeholder' => E::ts('- select -'),
-      ]
-    );
-
-    $this->add('select', 'target_mime_type',
-      E::ts("Target document type"),
-      CRM_Uimods_Utils_Civioffice::getMimetypes(),
-      true,
-      ['class' => 'crm-select2']
-    );
-
-    $this->add(
-      'select',
-      'activity_type_id',
-      E::ts("Create Activity"),
-      CRM_Civioffice_Configuration::getActivityTypes(),
-      false,
-      ['class' => 'crm-select2', 'placeholder' => E::ts("- don't create activity -")]
-    );
-
-    $this->add(
-      'checkbox',
-      'activity_attach_doc',
-      E::ts("Attach Rendered Document")
-    );
+    $this->add('select', 'document_renderer_uri', E::ts("Document Renderer"), CRM_Uimods_Utils_Civioffice::getDocumentRendererList(), true, ['class' => 'crm-select2 huge']);
+    $this->add('select2', 'document_uri', E::ts("Document"), CRM_Uimods_Utils_Civioffice::getDocumentList(), true, ['class' => 'huge', 'placeholder' => E::ts('- select -')]);
+    $this->add('select', 'target_mime_type', E::ts("Target document type"), CRM_Uimods_Utils_Civioffice::getMimetypes(), true, ['class' => 'crm-select2']);
+    $this->add('text', 'activity_subject', E::ts("Activity Subject"), ['size' => 100], false);
+    $this->add('select', 'activity_type_id', E::ts("Create Activity"), CRM_Civioffice_Configuration::getActivityTypes(), false, ['class' => 'crm-select2', 'placeholder' => E::ts("- don't create activity -")]);
+    $this->add('checkbox', 'activity_attach_doc', E::ts("Attach Rendered Document"));
 
     // Add fields for Live Snippets.
     CRM_Civioffice_LiveSnippets::addFormElements($this);
@@ -137,7 +101,7 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
       if (!empty($values['activity_type_id'])) {
         $activity = civicrm_api3('Activity', 'create', [
           'activity_type_id' => $values['activity_type_id'],
-          'subject' => E::ts("Document (CiviOffice)"),
+          'subject' => !empty($values['activity_subject']) ? $values['activity_subject'] : E::ts("Document (CiviOffice)"),
           'status_id' => 'Completed',
           'activity_date_time' => date("YmdHis"),
           'target_id' => [$this->contactId],

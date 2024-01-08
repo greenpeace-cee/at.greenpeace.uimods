@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Uimods</base>
+  <class>UimodsTemplate</class>
+  <name>civicrm_uimods_template</name>
+  <comment>Saves data for uimods templates</comment>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique ApiLog ID</comment>
+    <html>
+      <type>Number</type>
+    </html>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>scope_name</name>
+    <title>Scope Name of Template</title>
+    <type>varchar</type>
+    <length>60</length>
+    <required>true</required>
+    <comment>Scope name of template</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>target_value</name>
+    <title>Target value</title>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <comment>Target value</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>field_name</name>
+    <title>Field name</title>
+    <type>varchar</type>
+    <length>100</length>
+    <required>true</required>
+    <comment>Field name</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>field_value</name>
+    <title>Field value</title>
+    <type>longtext</type>
+    <comment>Field value</comment>
+    <default>NULL</default>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>field_type</name>
+    <title>Field Type</title>
+    <type>varchar</type>
+    <length>30</length>
+    <required>true</required>
+    <comment>Field type</comment>
+    <html>
+      <type>Text</type>
+    </html>
+  </field>
+
+  <field>
+    <name>is_field_hidden</name>
+    <title>Is Field Hidden?</title>
+    <type>boolean</type>
+    <required>true</required>
+    <comment>Is field hidden?</comment>
+  </field>
+
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>updated_at</name>
+    <title>Updated at</title>
+    <type>datetime</type>
+    <required>true</required>
+    <comment>Updated at date</comment>
+    <default>NOW()</default>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+
+  <field>
+    <name>created_at</name>
+    <title>Created at</title>
+    <type>datetime</type>
+    <required>true</required>
+    <comment>Created at date</comment>
+    <default>NOW()</default>
+    <html>
+      <type>Select Date</type>
+    </html>
+  </field>
+</table>

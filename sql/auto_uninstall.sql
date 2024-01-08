@@ -16,5 +16,6 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `civicrm_uimods_token`;
+DROP TABLE IF EXISTS `civicrm_uimods_template`;
 
 SET FOREIGN_KEY_CHECKS=1;
