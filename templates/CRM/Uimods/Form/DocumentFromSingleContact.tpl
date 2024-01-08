@@ -65,7 +65,7 @@
       initUimodsLiveTemplate();
 
       function initUimodsLiveTemplate() {
-        CRM.uimodsLiveTemplate.init({
+        var templateParams = {
           'scopeName' :'DocumentFromSingleContact',
           'targetElement' : $('#document_uri'),
           'targetElementLabel' : 'Document',
@@ -74,30 +74,48 @@
           'applyToFields': [
             {
               'id' : 'activity_type_id',
-              'type' : 'select2'
+              'type' : 'select2',
+              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
             },
             {
               'id' : 'document_renderer_uri',
-              'type' : 'select2'
+              'type' : 'select2',
+              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
             },
             {
               'id' : 'target_mime_type',
-              'type' : 'select2'
-            },
-            {
-              'selector' : "textarea[id^='live_snippets_']",
-              'type' : 'wysiwygElements'
+              'type' : 'select2',
+              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
             },
             {
               'id' : 'activity_subject',
-              'type' : 'textInput'
+              'type' : 'textInput',
+              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
             },
             {
               'id' : 'activity_attach_doc',
-              'type' : 'checkbox'
+              'type' : 'checkbox',
+              'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+              'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
             },
           ]
+        };
+
+        $("textarea[id^='live_snippets_']").each(function (i, element) {
+          var fieldId = $(element).attr('id');
+          templateParams.applyToFields.push({
+            'type' : 'wysiwygElement',
+            'id' : fieldId,
+            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
+          });
         });
+
+        CRM.uimodsLiveTemplate.init(templateParams);
       }
 
       function initCkeditor() {

@@ -14,23 +14,27 @@ Example of usage:
         'applyToFields': [
           {
             'id' : 'activity_type_id',
-            'type' : 'select2'
-          },
-          {
-            'selector' : "textarea[id^='live_snippets_']",
-            'type' : 'wysiwygElements'
+            'type' : 'select2',
+            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
           },
           {
             'id' : "description",
-            'type' : 'wysiwygElement'
+            'type' : 'wysiwygElement',
+            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
           },
           {
             'id' : 'activity_subject',
-            'type' : 'textInput'
+            'type' : 'textInput',
+            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
           },
           {
             'id' : 'activity_attach_doc',
-            'type' : 'checkbox'
+            'type' : 'checkbox',
+            'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
+            'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
           },
         ]
       });
@@ -62,6 +66,7 @@ CRM.$(function ($) {
           ],
         }).then(function(uimodsTemplates) {
           applyTemplateValues(uimodsTemplates, params);
+          applyTemplateFieldsVisibilities(uimodsTemplates, params);
         }, function(failure) {
           console.error('UimodsTemplate(' + params.scopeName + ') error:');
           console.error(failure);
@@ -96,6 +101,28 @@ CRM.$(function ($) {
     }
   }
 
+  function applyTemplateFieldsVisibilities(uimodsTemplates, params) {
+    for (var template of uimodsTemplates) {
+      var element = $('#' + template.field_name);
+      if (element.length === 0) {
+        continue;
+      }
+
+      var fieldParams = findTemplateParams(template.field_name, params);
+      if (fieldParams !== null) {
+        if (template.is_field_hidden) {
+          if (fieldParams['onHide'] !== 'undefined') {
+            fieldParams.onHide(element);
+          }
+        } else {
+          if (fieldParams['onShow'] !== 'undefined') {
+            fieldParams.onShow(element);
+          }
+        }
+      }
+    }
+  }
+
   function createIsEnabledUimodsTemplateCheckbox(params) {
     params.toggleCheckboxParentElement.append('' +
       '<div style="display: flex; gap: 10px;align-items: center;padding-bottom: 10px;padding-top: 5px;">' +
@@ -111,37 +138,45 @@ CRM.$(function ($) {
 
     $('#' + buttonId) .on("click", function (e) {
       if (params.targetElement.val() !== '') {
+        var html = '<div>';
+        for (var field of params.applyToFields) {
+          html += '<div>';
+          html += '<input type="checkbox" id="' + generateIsFieldHiddenId(field.id, params) + '">';
+          html += '<label for="' + generateIsFieldHiddenId(field.id, params) + '">' + field.id + '</label>';
+          html += '</div>';
+        }
+        html += '</div>';
+        html += '<div>';
+        html += 'Are you sure you want to update uimods templates for selected ' + params.targetElementLabel + '(' + params.targetElement.val() + ')';
+        html += '</div>';
+
         CRM.confirm({
           title: 'Save/update uimods template',
-          message: 'Are you sure you want to update uimods templates for selected ' + params.targetElementLabel + '(' + params.targetElement.val() + ')',
+          message: html,
         }).on('crmConfirm:yes', function() {
-
           for (var field of params.applyToFields) {
             if (field.type === 'select2') {
               var elementSelect2 = $('#' + field.id);
-              saveUimodsTemplate(field.id, elementSelect2.val(), field.type, params);
+              var isSelect2FieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              saveUimodsTemplate(isSelect2FieldHidden, field.id, elementSelect2.val(), field.type, params);
             }
 
             if (field.type === 'checkbox') {
               var elementCheckbox = $('#' + field.id);
-              saveUimodsTemplate(field.id, elementCheckbox.prop("checked") ? '1' : '0', field.type, params);
+              var isCheckboxFieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              saveUimodsTemplate(isCheckboxFieldHidden, field.id, elementCheckbox.prop("checked") ? '1' : '0', field.type, params);
             }
 
             if (field.type === 'textInput') {
               var elementTextInput = $('#' + field.id);
-              saveUimodsTemplate(field.id, elementTextInput.val(), field.type, params);
-            }
-
-            if (field.type === 'wysiwygElements') {
-              var wysiwygElements = $(field.selector);
-              wysiwygElements.each(function (i, element) {
-                saveUimodsTemplate($(element).attr('id'), CRM.wysiwyg.getVal(element), 'wysiwygElement', params);
-              });
+              var isTextInputFieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              saveUimodsTemplate(isTextInputFieldHidden, field.id, elementTextInput.val(), field.type, params);
             }
 
             if (field.type === 'wysiwygElement') {
               var wysiwygElement = $('#' + field.id);
-              saveUimodsTemplate(field.id, CRM.wysiwyg.getVal(wysiwygElement), 'wysiwygElement', params);
+              var isWysiwygElementHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              saveUimodsTemplate(isWysiwygElementHidden, field.id, CRM.wysiwyg.getVal(wysiwygElement), 'wysiwygElement', params);
             }
           }
         })
@@ -151,16 +186,17 @@ CRM.$(function ($) {
     });
   }
 
-  function saveUimodsTemplate(fieldName, fieldValue, fieldType, params) {
+  function saveUimodsTemplate(isFieldHidden, fieldName, fieldValue, fieldType, params) {
     CRM.api4('UimodsTemplate', 'UpdateTemplate', {
       scope_name: params.scopeName,
       target_value: params.targetElement.val(),
       field_name: fieldName,
       field_value: fieldValue,
       field_type: fieldType,
-      is_field_hidden: '0',
+      is_field_hidden: isFieldHidden ? 1 : 0,
     }).then(function(results) {
-      CRM.status('Uimods template("' + fieldName + '") saved!')
+      CRM.status('Uimods template("' + fieldName + '") saved!');
+      applyTemplateFieldsVisibilities(results[0]['template'], params);
     }, function(failure) {
       CRM.status('Cannot save uimods template("' + fieldName + '")', 'error');
       console.error('Cannot save uimods template("' + fieldName + '")', 'error');
@@ -170,6 +206,20 @@ CRM.$(function ($) {
 
   function isUimodsTemplateEnabled(params) {
     return $('#' + params.scopeName + 'isUimodsTemplateEnabled').prop("checked");
+  }
+
+  function findTemplateParams(fieldName, params) {
+    for (var field of params.applyToFields) {
+      if (field.id === fieldName) {
+        return field;
+      }
+    }
+
+    return null;
+  }
+
+  function generateIsFieldHiddenId(fieldName, params) {
+    return 'is_field_hidden_' + params.scopeName  + '_' + fieldName;
   }
 
 });
