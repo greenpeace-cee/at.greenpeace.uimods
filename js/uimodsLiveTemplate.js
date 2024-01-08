@@ -66,30 +66,25 @@ CRM.$(function ($) {
   function applyTemplateValues(uimodsTemplates, params) {
     for (var template of uimodsTemplates) {
       var element = $('#' + template.field_name);
-
-      if (template.htmlType === 'select2') {
-        if (element.length > 0) {
-          element.val(template.field_value);
-          element.select2();
-        }
+      if (element.length === 0) {
+        continue;
       }
 
-      if (template.htmlType === 'checkbox') {
-        if (element.length > 0) {
-          element.prop("checked", template.field_value);
-        }
+      if (template.field_type === 'select2') {
+        element.val(template.field_value);
+        element.select2();
       }
 
-      if (template.htmlType === 'textInput') {
-        if (element.length > 0) {
-          element.val(template.field_value);
-        }
+      if (template.field_type === 'checkbox') {
+        element.prop("checked", template.field_value);
       }
 
-      if (template.htmlType === 'wysiwygElement') {
-        if (element.length > 0) {
-          CRM.wysiwyg.setVal(element, template.field_value);
-        }
+      if (template.field_type === 'textInput') {
+        element.val(template.field_value);
+      }
+
+      if (template.field_type === 'wysiwygElement') {
+        CRM.wysiwyg.setVal(element, template.field_value);
       }
     }
   }
