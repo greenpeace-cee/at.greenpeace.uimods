@@ -65,41 +65,39 @@
       initUimodsLiveTemplate();
 
       function initUimodsLiveTemplate() {
-        if (CRM['uimodsLiveTemplate'] !== undefined) {
-          CRM.uimodsLiveTemplate.init({
-            'scopeName' :'DocumentFromSingleContact',
-            'targetElement' : $('#document_uri'),
-            'targetElementLabel' : 'Document',
-            'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
-            'saveTemplateButtonParentElement': $('.crm-submit-buttons').first(),
-            'applyToFields': [
-              {
-                'id' : 'activity_type_id',
-                'type' : 'select2'
-              },
-              {
-                'id' : 'document_renderer_uri',
-                'type' : 'select2'
-              },
-              {
-                'id' : 'target_mime_type',
-                'type' : 'select2'
-              },
-              {
-                'selector' : "textarea[id^='live_snippets_']",
-                'type' : 'wysiwygElements'
-              },
-              {
-                'id' : 'activity_subject',
-                'type' : 'textInput'
-              },
-              {
-                'id' : 'activity_attach_doc',
-                'type' : 'checkbox'
-              },
-            ]
-          });
-        }
+        CRM.uimodsLiveTemplate.init({
+          'scopeName' :'DocumentFromSingleContact',
+          'targetElement' : $('#document_uri'),
+          'targetElementLabel' : 'Document',
+          'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
+          'saveTemplateButtonParentElement': $('.crm-submit-buttons').first(),
+          'applyToFields': [
+            {
+              'id' : 'activity_type_id',
+              'type' : 'select2'
+            },
+            {
+              'id' : 'document_renderer_uri',
+              'type' : 'select2'
+            },
+            {
+              'id' : 'target_mime_type',
+              'type' : 'select2'
+            },
+            {
+              'selector' : "textarea[id^='live_snippets_']",
+              'type' : 'wysiwygElements'
+            },
+            {
+              'id' : 'activity_subject',
+              'type' : 'textInput'
+            },
+            {
+              'id' : 'activity_attach_doc',
+              'type' : 'checkbox'
+            },
+          ]
+        });
       }
 
       function initCkeditor() {
