@@ -1,35 +1,42 @@
 /*
 Example of usage:
 
-CRM.uimodsLiveTemplate.init({
-  'scopeName' :'DocumentFromSingleContact',
-  'targetElement' : $('#document_uri'),
-  'targetElementLabel' : 'Document',
-  'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
-  'saveTemplateButtonParentElement': $('.crm-submit-buttons').first(),
-  'applyToFields': [
-    {
-      'id' : 'activity_type_id',
-      'type' : 'select2'
-    },
-    {
-      'selector' : "textarea[id^='live_snippets_']",
-      'type' : 'wysiwygElements'
-    },
-    {
-      'id' : "description",
-      'type' : 'wysiwygElement'
-    },
-    {
-      'id' : 'activity_subject',
-      'type' : 'textInput'
-    },
-    {
-      'id' : 'activity_attach_doc',
-      'type' : 'checkbox'
-    },
-  ]
-});
+<script src="{crmResURL ext=at.greenpeace.uimods file=js/uimodsLiveTemplate.js}"></script>
+{literal}
+  <script>
+    CRM.$(function ($) {
+      CRM.uimodsLiveTemplate.init({
+        'scopeName' :'DocumentFromSingleContact',
+        'targetElement' : $('#document_uri'),
+        'targetElementLabel' : 'Document',
+        'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
+        'saveTemplateButtonParentElement': $('.crm-submit-buttons').first(),
+        'applyToFields': [
+          {
+            'id' : 'activity_type_id',
+            'type' : 'select2'
+          },
+          {
+            'selector' : "textarea[id^='live_snippets_']",
+            'type' : 'wysiwygElements'
+          },
+          {
+            'id' : "description",
+            'type' : 'wysiwygElement'
+          },
+          {
+            'id' : 'activity_subject',
+            'type' : 'textInput'
+          },
+          {
+            'id' : 'activity_attach_doc',
+            'type' : 'checkbox'
+          },
+        ]
+      });
+    });
+  </script>
+{/literal}
 */
 
 CRM.$(function ($) {
