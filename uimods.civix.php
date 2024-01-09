@@ -479,5 +479,10 @@ function _uimods_civix_civicrm_entityTypes(&$entityTypes) {
       'class' => 'CRM_Uimods_DAO_UimodsToken',
       'table' => 'civicrm_uimods_token',
     ],
+    'CRM_Uimods_DAO_UimodsTemplate' => [
+      'name' => 'UimodsTemplate',
+      'class' => 'CRM_Uimods_DAO_UimodsTemplate',
+      'table' => 'civicrm_uimods_template',
+    ],
   ]);
 }

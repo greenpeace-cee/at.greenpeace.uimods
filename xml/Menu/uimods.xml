@@ -1,3 +1,9 @@
 <?xml version="1.0"?>
 <menu>
+  <item>
+    <path>civicrm/uimods/document-from-single-contact</path>
+    <page_callback>CRM_Uimods_Form_DocumentFromSingleContact</page_callback>
+    <title>Create Document from Template</title>
+    <access_arguments>view all contacts</access_arguments>
+  </item>
 </menu>
