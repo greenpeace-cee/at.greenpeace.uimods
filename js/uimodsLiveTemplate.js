@@ -77,6 +77,20 @@ CRM.$(function ($) {
     });
   }
 
+  function updateUimodsTemplateParams(params) {
+    CRM.api4('UimodsTemplate', 'get', {
+      where: [
+        ["scope_name", "=", params.scopeName],
+        ["target_value", "=", params.targetElement.val()]
+      ],
+    }).then(function(uimodsTemplates) {
+      params.uimodsTemplates = uimodsTemplates;
+    }, function(failure) {
+      console.error('UimodsTemplate(' + params.scopeName + ') error:');
+      console.error(failure);
+    });
+  }
+
   function applyTemplateValues(uimodsTemplates, params) {
     for (var template of uimodsTemplates) {
       var element = $('#' + template.field_name);
@@ -110,7 +124,7 @@ CRM.$(function ($) {
         continue;
       }
 
-      var fieldParams = findTemplateParams(template.field_name, params);
+      var fieldParams = findJsTemplateParams(template.field_name, params);
       if (fieldParams !== null) {
         if (template.is_field_hidden) {
           if (fieldParams['onHide'] !== 'undefined') {
@@ -132,7 +146,7 @@ CRM.$(function ($) {
         continue;
       }
 
-      var fieldParams = findTemplateParams(template.field_name, params);
+      var fieldParams = findJsTemplateParams(template.field_name, params);
       if (fieldParams !== null) {
         if (fieldParams['onShow'] !== 'undefined') {
           fieldParams.onShow(element);
@@ -173,16 +187,32 @@ CRM.$(function ($) {
     $('#' + buttonId) .on("click", function (e) {
       if (params.targetElement.val() !== '') {
         var html = '<div>';
+        html += '<div>';
+        html += 'Are you sure you want to update uimods templates for selected ' + params.targetElementLabel + '(' + params.targetElement.val() + ')?';
+        html += '</div>';
+        html += '</br>';
+        html += '</br>';
+        html += '</br>';
+        html += '<p>You can hide some fields. Hidden fields:</p>';
+
+
         for (var field of params.applyToFields) {
+          var uiModsTemplateParam = findUiModsTemplateParams(field.id, params);
+          var isFieldHidden = false;
+          if (uiModsTemplateParam !== null) {
+            isFieldHidden = uiModsTemplateParam.is_field_hidden;
+          }
           html += '<div>';
-          html += '<input type="checkbox" id="' + generateIsFieldHiddenId(field.id, params) + '">';
+          html += '<input type="checkbox" id="' + generateIsFieldHiddenId(field.id, params) + '" ';
+          if (isFieldHidden) {
+            html += ' checked="checked" ';
+          }
+          html += ' >';
           html += '<label for="' + generateIsFieldHiddenId(field.id, params) + '">' + field.id + '</label>';
           html += '</div>';
         }
         html += '</div>';
-        html += '<div>';
-        html += 'Are you sure you want to update uimods templates for selected ' + params.targetElementLabel + '(' + params.targetElement.val() + ')';
-        html += '</div>';
+        html += '<p>(checked - field is hidden for view)</p>';
 
         CRM.confirm({
           title: 'Save/update uimods template',
@@ -213,6 +243,12 @@ CRM.$(function ($) {
               saveUimodsTemplate(isWysiwygElementHidden, field.id, CRM.wysiwyg.getVal(wysiwygElement), 'wysiwygElement', params);
             }
           }
+
+          // huck to update data current ui mods template params
+          //TODO: update each params after updating each settings
+          setTimeout(function () {
+            updateUimodsTemplateParams(params);
+          }, 800);
         })
       } else {
         CRM.status('To save uimods template need to chose ' + params.targetElementLabel + '.', 'error');
@@ -238,9 +274,19 @@ CRM.$(function ($) {
     });
   }
 
-  function findTemplateParams(fieldName, params) {
+  function findJsTemplateParams(fieldName, params) {
     for (var field of params.applyToFields) {
       if (field.id === fieldName) {
+        return field;
+      }
+    }
+
+    return null;
+  }
+
+  function findUiModsTemplateParams(fieldName, params) {
+    for (var field of params.uimodsTemplates) {
+      if (field.field_name === fieldName) {
         return field;
       }
     }
