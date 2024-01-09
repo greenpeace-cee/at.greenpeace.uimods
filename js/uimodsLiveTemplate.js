@@ -50,6 +50,7 @@ CRM.$(function ($) {
   CRM.uimodsLiveTemplate.init = function (params) {
     var scopeName = params.scopeName;
     CRM.uimodsLiveTemplate.params[scopeName] = params;
+    CRM.uimodsLiveTemplate.params[scopeName]['uimodsTemplates'] = [];
 
     initOnChangeTargetElement(CRM.uimodsLiveTemplate.params[scopeName]);
     createIsEnabledUimodsTemplateCheckbox(CRM.uimodsLiveTemplate.params[scopeName]);
@@ -65,6 +66,7 @@ CRM.$(function ($) {
             ["target_value", "=", params.targetElement.val()]
           ],
         }).then(function(uimodsTemplates) {
+          params.uimodsTemplates = uimodsTemplates;
           applyTemplateValues(uimodsTemplates, params);
           applyTemplateFieldsVisibilities(uimodsTemplates, params);
         }, function(failure) {
@@ -123,13 +125,45 @@ CRM.$(function ($) {
     }
   }
 
+  function unHideFields(params) {
+    for (var template of params.uimodsTemplates) {
+      var element = $('#' + template.field_name);
+      if (element.length === 0) {
+        continue;
+      }
+
+      var fieldParams = findTemplateParams(template.field_name, params);
+      if (fieldParams !== null) {
+        if (fieldParams['onShow'] !== 'undefined') {
+          fieldParams.onShow(element);
+        }
+      }
+    }
+  }
+
   function createIsEnabledUimodsTemplateCheckbox(params) {
     params.toggleCheckboxParentElement.append('' +
       '<div style="display: flex; gap: 10px;align-items: center;padding-bottom: 10px;padding-top: 5px;">' +
-        '<label for="' + params.scopeName + 'isUimodsTemplateEnabled" style="margin-bottom: 0 !important;">Use uimods Templates?</label>' +
-        '<input id="' + params.scopeName + 'isUimodsTemplateEnabled" type="checkbox" checked="checked" class="crm-form-checkbox">' +
+        '<label for="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" style="margin-bottom: 0 !important;">Use uimods Templates?</label>' +
+        '<input id="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" type="checkbox" checked="checked" class="crm-form-checkbox">' +
       '</div>'
     );
+
+    $('#' + getIsEnabledUimodsTemplateCheckboxId(params)).on('change', function() {
+      if ($(this).prop("checked")) {
+        applyTemplateFieldsVisibilities(params.uimodsTemplates, params);
+      } else {
+        unHideFields(params);
+      }
+    });
+  }
+
+  function isUimodsTemplateEnabled(params) {
+    return $('#' + params.scopeName + 'isUimodsTemplateEnabled').prop("checked");
+  }
+
+  function getIsEnabledUimodsTemplateCheckboxId(params) {
+    return params.scopeName + 'isUimodsTemplateEnabled';
   }
 
   function initTemplateSaveButton(params) {
@@ -202,10 +236,6 @@ CRM.$(function ($) {
       console.error('Cannot save uimods template("' + fieldName + '")', 'error');
       console.error(failure);
     });
-  }
-
-  function isUimodsTemplateEnabled(params) {
-    return $('#' + params.scopeName + 'isUimodsTemplateEnabled').prop("checked");
   }
 
   function findTemplateParams(fieldName, params) {
