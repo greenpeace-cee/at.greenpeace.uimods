@@ -158,7 +158,7 @@ CRM.$(function ($) {
   function createIsEnabledUimodsTemplateCheckbox(params) {
     params.toggleCheckboxParentElement.append('' +
       '<div style="display: flex; gap: 10px;align-items: center;padding-bottom: 10px;padding-top: 5px;">' +
-        '<label for="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" style="margin-bottom: 0 !important;">Use uimods Templates?</label>' +
+        '<label for="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" style="margin-bottom: 0 !important;">Use Template?</label>' +
         '<input id="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" type="checkbox" checked="checked" class="crm-form-checkbox">' +
       '</div>'
     );
@@ -182,18 +182,19 @@ CRM.$(function ($) {
 
   function initTemplateSaveButton(params) {
     var buttonId = params.scopeName + 'uimodsTemplateSaveButton';
-    params.saveTemplateButtonParentElement.append('<button id="' + buttonId + '" class="crm-form-submit default validate crm-button" type="button">Save/update uimods template</button>');
+    params.saveTemplateButtonParentElement.append('<button id="' + buttonId + '" class="crm-form-submit default validate crm-button" type="button">Manage Template</button>');
 
     $('#' + buttonId) .on("click", function (e) {
       if (params.targetElement.val() !== '') {
         var html = '<div>';
         html += '<div>';
-        html += 'Are you sure you want to update uimods templates for selected ' + params.targetElementLabel + '(' + params.targetElement.val() + ')?';
+        html += 'Template for ' + params.targetElementLabel + ' "' + params.targetElement.val() + '"';
+        html += '</br>';
+        html += '</br>';
+        html += 'Current form values will be saved as the default value when using the template.';
         html += '</div>';
         html += '</br>';
-        html += '</br>';
-        html += '</br>';
-        html += '<p>You can hide some fields. Hidden fields:</p>';
+        html += '<p>You can hide form elements that should not be used with this '  + params.targetElementLabel + ' by selecting them here:</p>';
 
 
         for (var field of params.applyToFields) {
@@ -212,10 +213,10 @@ CRM.$(function ($) {
           html += '</div>';
         }
         html += '</div>';
-        html += '<p>(checked - field is hidden for view)</p>';
+        html += '<p>(Checked fields will be hidden)</p>';
 
         CRM.confirm({
-          title: 'Save/update uimods template',
+          title: 'Manage Template',
           message: html,
         }).on('crmConfirm:yes', function() {
           for (var field of params.applyToFields) {
@@ -251,7 +252,7 @@ CRM.$(function ($) {
           }, 800);
         })
       } else {
-        CRM.status('To save uimods template need to chose ' + params.targetElementLabel + '.', 'error');
+        CRM.status('Select a ' + params.targetElementLabel + ' to manage the template', 'error');
       }
     });
   }
@@ -265,11 +266,11 @@ CRM.$(function ($) {
       field_type: fieldType,
       is_field_hidden: isFieldHidden ? 1 : 0,
     }).then(function(results) {
-      CRM.status('Uimods template("' + fieldName + '") saved!');
+      CRM.status('Template field "' + fieldName + '" saved!');
       applyTemplateFieldsVisibilities(results[0]['template'], params);
     }, function(failure) {
-      CRM.status('Cannot save uimods template("' + fieldName + '")', 'error');
-      console.error('Cannot save uimods template("' + fieldName + '")', 'error');
+      CRM.status('Cannot save template for "' + fieldName + '"', 'error');
+      console.error('Cannot save template for "' + fieldName + '"', 'error');
       console.error(failure);
     });
   }

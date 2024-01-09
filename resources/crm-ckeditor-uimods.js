@@ -19,15 +19,21 @@ CKEDITOR.editorConfig = function( config ) {
     { name: 'about', groups: [ 'about' ] }
   ];
 
-  config.removeButtons = 'Subscript,Superscript,Outdent,Blockquote,Link,Unlink,Anchor,Image,Table,HorizontalRule,SpecialChar,Styles,Format,Maximize,About,Indent,Scayt,PasteText,PasteFromWord,Paste';
+  config.removeButtons = 'Subscript,Superscript,Outdent,Blockquote,Link,Unlink,Anchor,Image,Table,HorizontalRule,SpecialChar,Styles,Format,Maximize,About,Indent,Scayt,PasteText,PasteFromWord,Paste,RemoveFormat';
 
   config.skin = 'moono';
 
   config.allowedContent = true;
 
-  config.startupFocus = true;
+  config.startupFocus = false;
 
   config.forcePasteAsPlainText = true;
 
   config.disableNativeSpellChecker = false;
+
+  config.autoParagraph = false;
+
+  config.ignoreEmptyParagraph = true;
+
+  config.enterMode = 2;
 };

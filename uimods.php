@@ -489,7 +489,7 @@ function uimods_civicrm_summaryActions(&$actions, $contactID) {
   // add "open document with single contact" action
   $actions['uimods_open_document_with_single_contact'] = [
     'ref'         => 'uimods-civioffice-render-single',
-    'title'       => ts('GP: Create CiviOffice document'),
+    'title'       => ts('Create Document from Template'),
     'weight'      => -120,
     'key'         => 'uimods_open_document_with_single_contact',
     'class'       => 'medium-popup',

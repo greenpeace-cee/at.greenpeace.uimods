@@ -34,14 +34,14 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
   public function buildQuickForm() {
     $defaults = [
       'activity_type_id' => CRM_Uimods_Utils_Civioffice::getContactSettingsCreateSingleActivityType(),
-      'activity_attach_doc' => CRM_Uimods_Utils_Civioffice::getContactSettingsCreateSingleActivityAttachment(),
+      'activity_attach_doc' => TRUE,
     ];
     $this->setAttribute('data-no-ajax-submit', 'true');
 
     $this->add('select', 'document_renderer_uri', E::ts("Document Renderer"), CRM_Uimods_Utils_Civioffice::getDocumentRendererList(), true, ['class' => 'crm-select2 huge']);
     $this->add('select2', 'document_uri', E::ts("Document"), CRM_Uimods_Utils_Civioffice::getDocumentList(), true, ['class' => 'huge', 'placeholder' => E::ts('- select -')]);
     $this->add('select', 'target_mime_type', E::ts("Target document type"), CRM_Uimods_Utils_Civioffice::getMimetypes(), true, ['class' => 'crm-select2']);
-    $this->add('text', 'activity_subject', E::ts("Activity Subject"), ['size' => 100], false);
+    $this->add('text', 'activity_subject', E::ts("Activity Subject"), ['size' => CRM_Utils_Type::HUGE], false);
     $this->add('select', 'activity_type_id', E::ts("Create Activity"), CRM_Civioffice_Configuration::getActivityTypes(), false, ['class' => 'crm-select2', 'placeholder' => E::ts("- don't create activity -")]);
     $this->add('checkbox', 'activity_attach_doc', E::ts("Attach Rendered Document"));
 
@@ -56,13 +56,13 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
       [
         [
           'type' => 'upload',
-          'name' => ts('Download Document'),
+          'name' => ts('Save and Download'),
           'isDefault' => true,
           'icon' => 'fa-download',
         ],
         [
           'type' => 'submit',
-          'name' => ts('Preview'),
+          'name' => ts('Download'),
           'subName' => 'preview',
           'icon' => 'fa-search',
           'isDefault' => false,

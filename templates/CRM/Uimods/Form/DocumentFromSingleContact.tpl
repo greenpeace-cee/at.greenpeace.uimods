@@ -7,7 +7,10 @@
 
     <div class="crm-section">
       <div class="label">{$form.document_uri.label}</div>
-      <div class="content">{$form.document_uri.html}</div>
+      <div class="content">
+        {$form.document_uri.html}
+        <div id="uimods_manage_template"></div>
+      </div>
       <div class="clear"></div>
     </div>
 
@@ -29,14 +32,14 @@
       <div class="crm-accordion-body">
 
         <div class="crm-section">
-          <div class="label">{$form.activity_subject.label}</div>
-          <div class="content">{$form.activity_subject.html}</div>
+          <div class="label">{$form.activity_type_id.label}</div>
+          <div class="content">{$form.activity_type_id.html}</div>
           <div class="clear"></div>
         </div>
 
         <div class="crm-section">
-          <div class="label">{$form.activity_type_id.label}</div>
-          <div class="content">{$form.activity_type_id.html}</div>
+          <div class="label">{$form.activity_subject.label}</div>
+          <div class="content">{$form.activity_subject.html}</div>
           <div class="clear"></div>
         </div>
 
@@ -62,7 +65,7 @@
   <script>
     CRM.$(function ($) {
       initCkeditor();
-      initUimodsLiveTemplate();
+      window.setTimeout(initUimodsLiveTemplate, 500);
 
       function initUimodsLiveTemplate() {
         var onHide = function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)};
@@ -72,7 +75,7 @@
           'targetElement' : $('#document_uri'),
           'targetElementLabel' : 'Document',
           'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
-          'saveTemplateButtonParentElement': $('.crm-submit-buttons').first(),
+          'saveTemplateButtonParentElement': $('#uimods_manage_template').first(),
           'applyToFields': [
             {
               'id' : 'activity_type_id',
