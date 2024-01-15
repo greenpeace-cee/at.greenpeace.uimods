@@ -494,6 +494,6 @@ function uimods_civicrm_summaryActions(&$actions, $contactID) {
     'key'         => 'uimods_open_document_with_single_contact',
     'class'       => 'medium-popup',
     'href'        => CRM_Utils_System::url('civicrm/uimods/document-from-single-contact', "reset=1"),
-    'permissions' => ['access CiviOffice']
+    'permissions' => ['view all contacts']
   ];
 }
