@@ -17,6 +17,7 @@ Example of usage:
             'type' : 'select2',
             'onHide' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'hidden')},
             'onShow' : function (fieldElement) {fieldElement.closest('.crm-section').css('visibility', 'visible')},
+            'isHideFieldAsDefault' : true,
           },
           {
             'id' : "description",
@@ -66,6 +67,8 @@ CRM.$(function ($) {
             ["target_value", "=", params.targetElement.val()]
           ],
         }).then(function(uimodsTemplates) {
+          console.log('uimodsTemplates');
+          console.log(uimodsTemplates);
           params.uimodsTemplates = uimodsTemplates;
           applyTemplateValues(uimodsTemplates, params);
           applyTemplateFieldsVisibilities(uimodsTemplates, params);
@@ -118,6 +121,14 @@ CRM.$(function ($) {
   }
 
   function applyTemplateFieldsVisibilities(uimodsTemplates, params) {
+    // hide all fields which is hidden as default
+    for (var field of params.applyToFields) {
+      if (field['isHideFieldAsDefault'] === true && field['onHide'] !== 'undefined') {
+        var fieldElement = $('#' + field.id);
+        field.onHide(fieldElement);
+      }
+    }
+
     for (var template of uimodsTemplates) {
       var element = $('#' + template.field_name);
       if (element.length === 0) {
@@ -157,7 +168,7 @@ CRM.$(function ($) {
 
   function createIsEnabledUimodsTemplateCheckbox(params) {
     params.toggleCheckboxParentElement.append('' +
-      '<div style="display: flex; gap: 10px;align-items: center;padding-bottom: 10px;padding-top: 5px;">' +
+      '<div style="display: flex; gap: 10px;align-items: center;">' +
         '<label for="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" style="margin-bottom: 0 !important;">Use Template?</label>' +
         '<input id="' + getIsEnabledUimodsTemplateCheckboxId(params) + '" type="checkbox" checked="checked" class="crm-form-checkbox">' +
       '</div>'
@@ -182,9 +193,16 @@ CRM.$(function ($) {
 
   function initTemplateSaveButton(params) {
     var buttonId = params.scopeName + 'uimodsTemplateSaveButton';
-    params.saveTemplateButtonParentElement.append('<button id="' + buttonId + '" class="crm-form-submit default validate crm-button" type="button">Manage Template</button>');
+
+    params.saveTemplateButtonParentElement.append('' +
+      '<a href="#" class="crm-link" id="' + buttonId + '"  title="Manage template"' +
+        'style="display: flex; width: 30px; height:30px; font-size:23px; align-items: center; justify-content: center;">' +
+        '<i class="crm-i fa-wrench"></i>' +
+      '</a>'
+    );
 
     $('#' + buttonId) .on("click", function (e) {
+      e.preventDefault();
       if (params.targetElement.val() !== '') {
         var html = '<div>';
         html += '<div>';
@@ -196,16 +214,17 @@ CRM.$(function ($) {
         html += '</br>';
         html += '<p>You can hide form elements that should not be used with this '  + params.targetElementLabel + ' by selecting them here:</p>';
 
-
         for (var field of params.applyToFields) {
           var uiModsTemplateParam = findUiModsTemplateParams(field.id, params);
           var isFieldHidden = false;
           if (uiModsTemplateParam !== null) {
             isFieldHidden = uiModsTemplateParam.is_field_hidden;
+          } else if (field['isHideFieldAsDefault'] === true) {
+            isFieldHidden = true;
           }
           html += '<div>';
           html += '<input type="checkbox" id="' + generateIsFieldHiddenId(field.id, params) + '" ';
-          if (isFieldHidden) {
+          if (!isFieldHidden) {
             html += ' checked="checked" ';
           }
           html += ' >';
@@ -213,7 +232,7 @@ CRM.$(function ($) {
           html += '</div>';
         }
         html += '</div>';
-        html += '<p>(Checked fields will be hidden)</p>';
+        html += '<p>(Checked fields will be shown)</p>';
 
         CRM.confirm({
           title: 'Manage Template',
@@ -222,25 +241,25 @@ CRM.$(function ($) {
           for (var field of params.applyToFields) {
             if (field.type === 'select2') {
               var elementSelect2 = $('#' + field.id);
-              var isSelect2FieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              var isSelect2FieldHidden = !$('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
               saveUimodsTemplate(isSelect2FieldHidden, field.id, elementSelect2.val(), field.type, params);
             }
 
             if (field.type === 'checkbox') {
               var elementCheckbox = $('#' + field.id);
-              var isCheckboxFieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              var isCheckboxFieldHidden = !$('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
               saveUimodsTemplate(isCheckboxFieldHidden, field.id, elementCheckbox.prop("checked") ? '1' : '0', field.type, params);
             }
 
             if (field.type === 'textInput') {
               var elementTextInput = $('#' + field.id);
-              var isTextInputFieldHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              var isTextInputFieldHidden = !$('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
               saveUimodsTemplate(isTextInputFieldHidden, field.id, elementTextInput.val(), field.type, params);
             }
 
             if (field.type === 'wysiwygElement') {
               var wysiwygElement = $('#' + field.id);
-              var isWysiwygElementHidden = $('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
+              var isWysiwygElementHidden = !$('#' + generateIsFieldHiddenId(field.id, params)).prop("checked");
               saveUimodsTemplate(isWysiwygElementHidden, field.id, CRM.wysiwyg.getVal(wysiwygElement), 'wysiwygElement', params);
             }
           }
@@ -296,7 +315,7 @@ CRM.$(function ($) {
   }
 
   function generateIsFieldHiddenId(fieldName, params) {
-    return 'is_field_hidden_' + params.scopeName  + '_' + fieldName;
+    return 'is_show_field_' + params.scopeName  + '_' + fieldName;
   }
 
 });

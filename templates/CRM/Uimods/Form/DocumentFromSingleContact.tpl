@@ -8,8 +8,15 @@
     <div class="crm-section">
       <div class="label">{$form.document_uri.label}</div>
       <div class="content">
-        {$form.document_uri.html}
-        <div id="uimods_manage_template"></div>
+        <div class="uimods__manage_template-uri-input-wrap">
+          <div class="uimods__manage_template-uri-input">
+            {$form.document_uri.html}
+          </div>
+          <div class="uimods__manage_template-buttons">
+            <div id="uimods_manage_template_save_button"></div>
+            <div id="uimods_manage_template_toggle_checkbox"></div>
+          </div>
+        </div>
       </div>
       <div class="clear"></div>
     </div>
@@ -34,6 +41,12 @@
         <div class="crm-section">
           <div class="label">{$form.activity_type_id.label}</div>
           <div class="content">{$form.activity_type_id.html}</div>
+          <div class="clear"></div>
+        </div>
+
+        <div class="crm-section">
+          <div class="label">{$form.activity_medium_id.label}</div>
+          <div class="content">{$form.activity_medium_id.html}</div>
           <div class="clear"></div>
         </div>
 
@@ -65,7 +78,7 @@
   <script>
     CRM.$(function ($) {
       initCkeditor();
-      window.setTimeout(initUimodsLiveTemplate, 500);
+      initUimodsLiveTemplate();
 
       function initUimodsLiveTemplate() {
         var onHide = function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)};
@@ -74,8 +87,8 @@
           'scopeName' :'DocumentFromSingleContact',
           'targetElement' : $('#document_uri'),
           'targetElementLabel' : 'Document',
-          'toggleCheckboxParentElement' : $('#s2id_document_uri').closest('.content'),
-          'saveTemplateButtonParentElement': $('#uimods_manage_template').first(),
+          'toggleCheckboxParentElement' : $('#uimods_manage_template_toggle_checkbox').first(),
+          'saveTemplateButtonParentElement': $('#uimods_manage_template_save_button').first(),
           'applyToFields': [
             {
               'id' : 'activity_type_id',
@@ -117,6 +130,7 @@
             'id' : fieldId,
             'onHide' : onHide,
             'onShow' : onShow,
+            'isHideFieldAsDefault' : true,
           });
         });
 
@@ -129,7 +143,44 @@
           $(element).data('preset', 'uimods');
           CRM.wysiwyg.create(element);
         });
+
+        // wysiwyg has bigger height than regular textarea, and it scrolls page to down
+        // scrolls to top after loading wysiwyg:
+        setTimeout(function () {
+          var uiDialogContentElement = $('.CRM_Uimods_Form_DocumentFromSingleContact').closest('.ui-dialog-content');
+          if (uiDialogContentElement.length !== 0) {
+            uiDialogContentElement.scrollTop("0");
+          } else {
+            CRM.$(window).scrollTop(0);
+          }
+        }, 800);
       }
     });
   </script>
+  <style>
+    .uimods__manage_template-uri-input {
+      align-items: baseline;
+      display: flex;
+      gap: 10px;
+    }
+
+    .uimods__manage_template-uri-input-wrap {
+      align-items: flex-start;
+      display: flex;
+      gap: 10px;
+    }
+
+    .uimods__manage_template-uri-input-wrap .crm-error {
+      max-width: 300px;
+    }
+
+    .uimods__manage_template-buttons {
+      gap: 10px;
+      display: flex;
+    }
+
+    #uimods_manage_template_toggle_checkbox {
+      display: flex;
+    }
+  </style>
 {/literal}

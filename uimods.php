@@ -147,6 +147,14 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
  */
 function uimods_civicrm_pageRun( &$page ) {
   $page_name = $page->getVar('_name');
+
+  // improve contact summary popup of DocumentFromSingleContact form:
+  if ($page_name == 'CRM_Contact_Page_View_Summary') {
+    CRM_Core_Region::instance('page-header')->add(array(
+      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/improveSummaryPopups.js'),
+    ));
+  }
+
   if ($page_name == 'CRM_Contact_Page_View_Summary') {
 
     // $emailIdsMap - it is hack to get email id by index of array
