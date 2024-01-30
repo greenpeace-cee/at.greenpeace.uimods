@@ -44,6 +44,7 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
     $this->add('text', 'activity_subject', E::ts("Activity Subject"), ['size' => CRM_Utils_Type::HUGE], false);
     $this->add('select', 'activity_type_id', E::ts("Create Activity"), CRM_Civioffice_Configuration::getActivityTypes(), false, ['class' => 'crm-select2', 'placeholder' => E::ts("- don't create activity -")]);
     $this->add('checkbox', 'activity_attach_doc', E::ts("Attach Rendered Document"));
+    $this->add('select', 'activity_medium_id', E::ts("Activity Medium"), CRM_Case_PseudoConstant::encounterMedium(), false, ['class' => 'crm-select2', 'placeholder' => E::ts('- select -')]);
 
     // Add fields for Live Snippets.
     CRM_Civioffice_LiveSnippets::addFormElements($this);
@@ -99,7 +100,7 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
     if ($this->isLiveMode()) {
       // Create activity, if requested.
       if (!empty($values['activity_type_id'])) {
-        $activity = civicrm_api3('Activity', 'create', [
+        $activityParams = [
           'activity_type_id' => $values['activity_type_id'],
           'subject' => !empty($values['activity_subject']) ? $values['activity_subject'] : E::ts("Document (CiviOffice)"),
           'status_id' => 'Completed',
@@ -117,7 +118,13 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
                     . '<td>' . $value . '</td>';
                 }, array_keys($live_snippet_values), $live_snippet_values)
               ) . '</tr></table>' : ''),
-        ]);
+        ];
+
+        if (!empty($values['activity_medium_id'])) {
+          $activityParams['medium_id'] = $values['activity_medium_id'];
+        }
+
+        $activity = civicrm_api3('Activity', 'create', $activityParams);
 
         // generate & link attachment if requested
         if (!empty($values['activity_attach_doc'])) {
