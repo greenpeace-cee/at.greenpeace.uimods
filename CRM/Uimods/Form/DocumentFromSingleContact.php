@@ -44,7 +44,7 @@ class CRM_Uimods_Form_DocumentFromSingleContact extends CRM_Core_Form {
     $this->add('text', 'activity_subject', E::ts("Activity Subject"), ['size' => CRM_Utils_Type::HUGE], false);
     $this->add('select', 'activity_type_id', E::ts("Create Activity"), CRM_Civioffice_Configuration::getActivityTypes(), false, ['class' => 'crm-select2', 'placeholder' => E::ts("- don't create activity -")]);
     $this->add('checkbox', 'activity_attach_doc', E::ts("Attach Rendered Document"));
-    $this->add('select', 'activity_medium_id', E::ts("Activity medium"), CRM_Case_PseudoConstant::encounterMedium(), false, ['class' => 'crm-select2', 'placeholder' => E::ts('- select -')]);
+    $this->add('select', 'activity_medium_id', E::ts("Activity Medium"), CRM_Case_PseudoConstant::encounterMedium(), false, ['class' => 'crm-select2', 'placeholder' => E::ts('- select -')]);
 
     // Add fields for Live Snippets.
     CRM_Civioffice_LiveSnippets::addFormElements($this);

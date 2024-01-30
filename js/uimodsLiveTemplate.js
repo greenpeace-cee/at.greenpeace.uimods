@@ -67,8 +67,6 @@ CRM.$(function ($) {
             ["target_value", "=", params.targetElement.val()]
           ],
         }).then(function(uimodsTemplates) {
-          console.log('uimodsTemplates');
-          console.log(uimodsTemplates);
           params.uimodsTemplates = uimodsTemplates;
           applyTemplateValues(uimodsTemplates, params);
           applyTemplateFieldsVisibilities(uimodsTemplates, params);

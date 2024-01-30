@@ -79,6 +79,7 @@
     CRM.$(function ($) {
       initCkeditor();
       initUimodsLiveTemplate();
+      toggleActivityFieldMandatory();
 
       function initUimodsLiveTemplate() {
         var onHide = function (fieldElement) {fieldElement.closest('.crm-section').css('overflow', 'hidden').css('height', 0)};
@@ -154,6 +155,22 @@
             CRM.$(window).scrollTop(0);
           }
         }, 800);
+      }
+
+      function toggleActivityFieldMandatory() {
+        $('.CRM_Uimods_Form_DocumentFromSingleContact').find('#activity_type_id').on('change', function (e) {
+          checkActivityFieldsShouldBeRequired();
+        });
+        checkActivityFieldsShouldBeRequired();
+      }
+
+      /**
+       * make activity medium and subject mandatory if activity_type_id is set
+       */
+      function checkActivityFieldsShouldBeRequired() {
+        var required = $('.CRM_Uimods_Form_DocumentFromSingleContact').find('#activity_type_id').val() != '';
+        $('.CRM_Uimods_Form_DocumentFromSingleContact').find('#activity_medium_id').attr('required', required);
+        $('.CRM_Uimods_Form_DocumentFromSingleContact').find('#activity_subject').attr('required', required);
       }
     });
   </script>
