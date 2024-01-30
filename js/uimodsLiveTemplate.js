@@ -210,7 +210,7 @@ CRM.$(function ($) {
         html += 'Current form values will be saved as the default value when using the template.';
         html += '</div>';
         html += '</br>';
-        html += '<p>You can hide form elements that should not be used with this '  + params.targetElementLabel + ' by selecting them here:</p>';
+        html += '<p>You can hide form elements that should not be used with this '  + params.targetElementLabel + ' by deselecting them here:</p>';
 
         for (var field of params.applyToFields) {
           var uiModsTemplateParam = findUiModsTemplateParams(field.id, params);
