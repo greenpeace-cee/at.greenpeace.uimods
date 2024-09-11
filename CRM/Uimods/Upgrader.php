@@ -4,7 +4,7 @@ use CRM_Uimods_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Uimods_Upgrader extends CRM_Uimods_Upgrader_Base {
+class CRM_Uimods_Upgrader extends CRM_Extension_Upgrader_Base {
 
   /**
    * Runs after extension is installed
