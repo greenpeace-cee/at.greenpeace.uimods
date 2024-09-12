@@ -13,9 +13,17 @@ class CRM_Uimods_Merge_MergeContact {
     return self::$instance;
   }
 
-  private function __clone() {}
-  private function __wakeup(){}
-  private function __construct() {}
+  public function __clone() {
+    throw new Exception('__clone is not allowed.');
+  }
+
+  public function __wakeup() {
+    throw new Exception('__wakeup is not allowed.');
+  }
+
+  public function __construct() {
+    throw new Exception('__construct is not allowed.');
+  }
 
   /**
    * @param $mergeInformation
@@ -67,8 +75,8 @@ class CRM_Uimods_Merge_MergeContact {
       }
 
       CRM_Core_Session::setStatus(
-        'Fixed location type in - ' . count($updateDataItems) . ' phones. Ids: ' . implode(',', $ids), 
-        ts('Post merge phone fixes'), 
+        'Fixed location type in - ' . count($updateDataItems) . ' phones. Ids: ' . implode(',', $ids),
+        ts('Post merge phone fixes'),
         'success'
       );
     }
