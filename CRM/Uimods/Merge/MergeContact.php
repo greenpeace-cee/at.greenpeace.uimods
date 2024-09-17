@@ -21,10 +21,6 @@ class CRM_Uimods_Merge_MergeContact {
     throw new Exception('__wakeup is not allowed.');
   }
 
-  public function __construct() {
-    throw new Exception('__construct is not allowed.');
-  }
-
   /**
    * @param $mergeInformation
    * @return void
