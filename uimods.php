@@ -81,7 +81,6 @@ function uimods_civicrm_buildForm($formName, &$form) {
   CRM_Uimods_Tools_BirthYear::process_buildForm($formName, $form);
   switch ($formName) {
     case 'CRM_Contact_Form_Merge':
-      require_once 'CRM/Uimods/MergeFormUIMods.php';
       CRM_Uimods_MergeFromUIMods::buildFormHook($formName, $form);
       break;
 
@@ -359,17 +358,6 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
         Civi::log()->warning("[UIMods] Encountered error while calculating tokens for contact {$cid}: {$e->getMessage()}");
       }
     }
-  }
-}
-
-/**
- * Implements uimods_civicrm_apiWrappers()
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_apiWrappers/
- */
-function uimods_civicrm_apiWrappers(&$wrappers, $apiRequest) {
-  if ($apiRequest['entity'] == 'Contact' && $apiRequest['action'] == 'getquick') {
-    $wrappers[] = new CRM_Uimods_ContactGetQuickApiWrapper();
   }
 }
 
