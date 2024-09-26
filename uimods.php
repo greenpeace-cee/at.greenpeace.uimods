@@ -395,7 +395,7 @@ function uimods_civicrm_summaryActions(&$actions, $contactID) {
   $actions['uimods_open_document_with_single_contact'] = [
     'ref'         => 'uimods-civioffice-render-single',
     'title'       => ts('Create Document from Template'),
-    'weight'      => -120,
+    'weight'      => 0,
     'key'         => 'uimods_open_document_with_single_contact',
     'class'       => 'medium-popup',
     'href'        => CRM_Utils_System::url('civicrm/uimods/document-from-single-contact', "reset=1"),
