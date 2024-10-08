@@ -402,3 +402,9 @@ function uimods_civicrm_summaryActions(&$actions, $contactID) {
     'permissions' => ['view all contacts']
   ];
 }
+
+function uimods_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  // Require 'manage tags' permission to create/update tags
+  $permissions['tag']['create'] = ['manage tags'];
+  $permissions['tag']['update'] = ['manage tags'];
+}
