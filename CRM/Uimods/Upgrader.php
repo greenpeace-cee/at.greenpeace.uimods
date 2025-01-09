@@ -43,7 +43,7 @@ class CRM_Uimods_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Applying update 0164. Install civicrm_uimods_template table.');
 
     CRM_Core_DAO::executeQuery("
-      CREATE TABLE `civicrm_uimods_template` (
+      CREATE TABLE IF NOT EXISTS `civicrm_uimods_template` (
         `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique ApiLog ID',
         `scope_name` varchar(60) NOT NULL COMMENT 'Scope name of template',
         `target_value` varchar(100) NOT NULL COMMENT 'Target value',
