@@ -13,6 +13,7 @@
 +--------------------------------------------------------*/
 
 use Civi\Api4\UimodsToken;
+use Civi\Uimods\Hooks\BuildForm\ImproveActivityAssigneesField;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Resource\FileResource;
 
@@ -241,6 +242,11 @@ function uimods_civicrm_config(&$config) {
   Civi::dispatcher()->addListener(
     'hook_civicrm_inboundSMS',
     'CRM_Uimods_SMS_Listener::inboundSMS',
+    PHP_INT_MAX - 1
+  );
+  Civi::dispatcher()->addListener(
+    'hook_civicrm_buildForm',
+    ImproveActivityAssigneesField::class . '::run',
     PHP_INT_MAX - 1
   );
 }
