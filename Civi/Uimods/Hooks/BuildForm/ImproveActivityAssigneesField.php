@@ -2,6 +2,7 @@
 
 namespace Civi\Uimods\Hooks\BuildForm;
 
+use Civi;
 use Civi\Core\Event\GenericHookEvent;
 
 class ImproveActivityAssigneesField {
@@ -16,7 +17,7 @@ class ImproveActivityAssigneesField {
       return;
     }
 
-    $groupName = '';// TODO: Add
+    $groupName = Civi::settings()->get('at_greenpeace_uimods_activity_assignees_filter_group_name');
     if (empty($groupName)) {
       return;
     }

@@ -71,4 +71,15 @@ return [
     'is_contact' => 0,
     'description' => 'Discard SMS from unknown sender?',
   ],
+  'at_greenpeace_uimods_activity_assignees_filter_group_name' => [
+    'group_name' => 'GP UIMods',
+    'group' => 'at_greenpeace_uimods',
+    'name' => 'at_greenpeace_uimods_activity_assignees_filter_group_name',
+    'type' => 'string',
+    'default' => '',
+    'add' => '4.6',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Group name, which uses for filter at "activity_assignees" field.',
+  ],
  ];
