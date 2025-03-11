@@ -1,27 +1,14 @@
 <?php
-/*-------------------------------------------------------+
-| Greenpeace UI Modifications                            |
-| Copyright (C) 2017 SYSTOPIA                            |
-+--------------------------------------------------------+
-| This program is released as free software under the    |
-| Affero GPL license. You can redistribute it and/or     |
-| modify it under the terms of this license which you    |
-| can read by viewing the included agpl.txt or online    |
-| at www.gnu.org/licenses/agpl.html. Removal of this     |
-| copyright header is strictly prohibited without        |
-| written permission from the original author(s).        |
-+--------------------------------------------------------*/
 
-/*
-* Settings metadata file
-*/
+use CRM_Uimods_ExtensionUtil as E;
+
 return [
   'at_greenpeace_uimods_config' => [
     'group_name' => 'GP UIMods',
     'group' => 'at_greenpeace_uimods',
     'name' => 'at_greenpeace_uimods_config',
     'type' => 'Array',
-    'default' => array(),
+    'default' => [],
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
@@ -81,5 +68,21 @@ return [
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'Group name, which uses for filter at "activity_assignees" field.',
+  ],
+  'allowed_email_workflows' => [
+    'name'        => 'allowed_email_workflows',
+    'type'        => 'Array',
+    'html_type'   => 'text',
+    'default'     => [
+      '/^password_reset$/',
+      '/^test_preview$/',
+    ],
+    'add'         => '1.0',
+    'title'       => E::ts('Allowed Email Workflows'),
+    'description' => E::ts(
+      'Allowlist of email workflows (message templates) in RegEx format which are allowed to be used for outbound emails.'
+           . 'Attempting to send workflows not listed here will raise an Exception to prevent accidental email communication to supporters.'),
+    'is_domain'   => 1,
+    'is_contact'  => 0,
   ],
  ];

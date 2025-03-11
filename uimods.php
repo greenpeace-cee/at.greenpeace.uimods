@@ -80,6 +80,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
   CRM_Uimods_Tools_MoneyFields::processBuildForm($formName, $form);
   CRM_Uimods_Tools_BankAccount::renderForm($formName, $form);
   CRM_Uimods_Tools_BirthYear::process_buildForm($formName, $form);
+  CRM_Uimods_Tools_EmailReceipt::process_buildForm($formName, $form);
   switch ($formName) {
     case 'CRM_Contact_Form_Merge':
       CRM_Uimods_MergeFromUIMods::buildFormHook($formName, $form);
@@ -413,4 +414,26 @@ function uimods_civicrm_alterAPIPermissions($entity, $action, &$params, &$permis
   // Require 'manage tags' permission to create/update tags
   $permissions['tag']['create'] = ['manage tags'];
   $permissions['tag']['update'] = ['manage tags'];
+}
+
+/**
+ * Throw exception when attempting to send disallowed email workflows to prevent
+ * accidental email communication with supporters
+ *
+ * @param $params
+ * @param $context
+ *
+ * @return void
+ * @throws \Exception
+ */
+function uimods_civicrm_alterMailParams(&$params, $context) {
+  if (!empty($params['workflow'])) {
+    foreach (Civi::settings()->get('allowed_email_workflows') ?? [] as $allowedWorkflow) {
+      if (preg_match($allowedWorkflow, $params['workflow'])) {
+        // workflow is allowed, continue
+        return;
+      }
+    }
+    throw new Exception("Attempting to send email workflow {$params['workflow']} which is not allowed. Please adjust the allowed_email_workflows setting to allow usage if needed.");
+  }
 }
