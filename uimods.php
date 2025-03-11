@@ -427,7 +427,7 @@ function uimods_civicrm_alterAPIPermissions($entity, $action, &$params, &$permis
  * @throws \Exception
  */
 function uimods_civicrm_alterMailParams(&$params, $context) {
-  if (!empty($params['workflow'])) {
+  if (!empty($params['workflow']) && $params['workflow'] != 'UNKNOWN') {
     foreach (Civi::settings()->get('allowed_email_workflows') ?? [] as $allowedWorkflow) {
       if (preg_match($allowedWorkflow, $params['workflow'])) {
         // workflow is allowed, continue
