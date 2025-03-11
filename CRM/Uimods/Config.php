@@ -260,7 +260,13 @@ class CRM_Uimods_Config {
    */
   public static function getExtendedDemographicsGroup() {
     if (self::$extended_demographics_group == NULL) {
-      self::$extended_demographics_group = civicrm_api3('CustomGroup', 'getsingle', array('name' => 'additional_demographics'));
+      try {
+        self::$extended_demographics_group = civicrm_api3('CustomGroup', 'getsingle', array('name' => 'additional_demographics'));
+      } catch (CRM_Core_Exception $e) {
+        Civi::log()->error('Unable to find CustomGroup "additional_demographics": ' . $e->getMessage());
+        return NULL;
+      }
+
     }
     return self::$extended_demographics_group;
   }

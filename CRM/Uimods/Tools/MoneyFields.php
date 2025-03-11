@@ -48,7 +48,7 @@ class CRM_Uimods_Tools_MoneyFields {
           if ($form->elementExists($fieldName)) {
             $element = $form->getElement($fieldName);
             $value = $element->getValue();
-            $cleanValue = str_replace($monetaryDecimalPoint, "", $value);
+            $cleanValue = str_replace($monetaryDecimalPoint, "", $value ?? '');
             $element->setValue($cleanValue);
           }
         }
