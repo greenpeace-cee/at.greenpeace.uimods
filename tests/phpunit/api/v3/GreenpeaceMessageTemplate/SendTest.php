@@ -28,7 +28,7 @@ class api_v3_GreenpeaceMessageTemplate_SendTest extends \PHPUnit\Framework\TestC
   /**
    * The setup() method is executed before the test is executed (optional).
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
   }
 
@@ -36,7 +36,7 @@ class api_v3_GreenpeaceMessageTemplate_SendTest extends \PHPUnit\Framework\TestC
    * The tearDown() method is executed after the test was executed (optional)
    * This can be used for cleanup.
    */
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
   }
 
