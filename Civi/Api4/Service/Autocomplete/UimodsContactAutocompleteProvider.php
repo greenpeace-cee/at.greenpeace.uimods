@@ -14,12 +14,18 @@ use Civi\Core\Service\AutoService;
  */
 class UimodsContactAutocompleteProvider extends AutoService implements HookInterface {
 
+  /**
+   * Using a different alias for email_primary.email and phone_primary.phone
+   * doesn't work reliably, but "overwriting" it like this seems to work ...
+   */
   const FIXED_SELECT_FIELDS = [
     'id',
     'sort_name',
     'phone_primary.phone_numeric',
     'phone_primary.phone',
     'email_primary.email',
+    'GROUP_FIRST(email_primary.email ORDER BY email_primary.is_primary DESC) AS email_primary.email',
+    'GROUP_FIRST(phone_primary.phone ORDER BY phone_primary.is_primary DESC) AS phone_primary.phone',
     'address_primary.street_address',
     'address_primary.city',
     'address_primary.country_id:abbr',
@@ -68,6 +74,18 @@ class UimodsContactAutocompleteProvider extends AutoService implements HookInter
         if ($resultIdentity['count'] > 0 && !empty(reset($resultIdentity['values'])['id'])) {
           $filters = $apiRequest->getFilters();
           $filters['id'] = reset($resultIdentity['values'])['id'];
+          $apiRequest->setFilters($filters);
+        }
+      }
+
+      if (!empty($apiRequest->getFilters()['phone_primary.phone_numeric'])) {
+        $filters = $apiRequest->getFilters();
+        // strip +, (, ) and whitespace. we want to be less thorough than phone_numeric
+        // so we don't trigger phone searches for name/email/etc. inputs
+        $strippedPhone = preg_replace('/[+()\s]/', '', $filters['phone_primary.phone_numeric']);
+        // make sure stripped phone is not completely empty; otherwise this just returns all contacts and looks silly
+        if (!empty($strippedPhone)) {
+          $filters['phone_primary.phone_numeric'] = $strippedPhone;
           $apiRequest->setFilters($filters);
         }
       }
