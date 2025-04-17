@@ -80,7 +80,7 @@ return [
       'input_type' => 'Select Date',
       'required' => TRUE,
       'description' => E::ts('Updated at date'),
-      'default' => 'NOW()',
+      'default' => 'CURRENT_TIMESTAMP',
     ],
     'created_at' => [
       'title' => E::ts('Created at'),
@@ -88,7 +88,7 @@ return [
       'input_type' => 'Select Date',
       'required' => TRUE,
       'description' => E::ts('Created at date'),
-      'default' => 'NOW()',
+      'default' => 'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
     ],
   ],
 ];
