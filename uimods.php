@@ -368,16 +368,21 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
   }
 }
 
-function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
+function uimods_civicrm_merge($type, &$data, $mainContactId = NULL, $secondaryContactId = NULL, $tables = NULL) {
   if ($type == 'form') {
     $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
-    $mergeContact->setMergeInformation($data['migration_info']);
+    $mergeContact->setData($data['migration_info'], $mainContactId, $secondaryContactId);
   }
 
   if ($type == 'sqls') {
     $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
     $mergeContact->postMergeFixEmails();
     $mergeContact->postMergeFixPhones();
+
+    $sqlList = $mergeContact->postMergeFixBirth();
+    foreach ($sqlList as $sql) {
+      $data[] = $sql;
+    }
   }
 
   if ($type == 'sqls') {
@@ -390,8 +395,8 @@ function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $t
     $data[] = CRM_Core_DAO::composeQuery(
       'DELETE FROM civicrm_uimods_token WHERE contact_id IN (%1, %2)',
       [
-        1 => [$mainId, 'Integer'],
-        2 => [$otherId, 'Integer']
+        1 => [$mainContactId, 'Integer'],
+        2 => [$secondaryContactId, 'Integer']
       ]
     );
   }
