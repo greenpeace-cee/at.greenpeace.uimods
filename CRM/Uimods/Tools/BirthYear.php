@@ -311,7 +311,7 @@ class CRM_Uimods_Tools_BirthYear {
     return CRM_Core_DAO::composeQuery(
         'UPDATE civicrm_contact SET birth_date = %1 WHERE id = %2',
         [
-            1 => [$birthDate, 'String'],
+            1 => [$birthDate, 'Date'],
             2 => [$contactId, 'Integer']
         ]
     );
@@ -339,17 +339,15 @@ class CRM_Uimods_Tools_BirthYear {
               2 => [$value, $valueType]
           ]
       );
-    } else {
-      return CRM_Core_DAO::composeQuery(
-          'INSERT INTO ' . $tableName . ' (entity_id, ' . $columnName . ') VALUES(%1, %2)',
-          [
-              1 => [$entityId, 'Integer'],
-              2 => [$value, $valueType]
-          ]
-      );
     }
 
-    return '';
+    return CRM_Core_DAO::composeQuery(
+        'INSERT INTO ' . $tableName . ' (entity_id, ' . $columnName . ') VALUES(%1, %2)',
+        [
+            1 => [$entityId, 'Integer'],
+            2 => [$value, $valueType]
+        ]
+    );
   }
 
 

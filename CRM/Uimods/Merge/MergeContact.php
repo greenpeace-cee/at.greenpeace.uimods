@@ -111,6 +111,21 @@ class CRM_Uimods_Merge_MergeContact {
       $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $mainContactBirthYear);
     }
 
+    if (empty($mainContactBirthYear) && empty($secondaryContactBirthYear) && !empty($mainContactBirthDate)) {
+      try {
+        $birthYear = (new DateTime($mainContactBirthDate))->format('Y');
+        $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
+      } catch (Exception $e) {}
+    }
+    
+    if (empty($mainContactBirthYear) && empty($secondaryContactBirthYear) && !empty($secondaryContactBirthDate)) {
+      try {
+        $birthYear = (new DateTime($secondaryContactBirthDate))->format('Y');
+        $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
+      } catch (Exception $e) {}
+    }
+
+
     CRM_Core_Session::setStatus('Fixed year of birth in contact id: ' . $this->mainContactId, ts('Post merge'), 'success');
 
     return $sqlList;
