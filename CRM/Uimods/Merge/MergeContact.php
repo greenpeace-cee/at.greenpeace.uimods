@@ -2,12 +2,17 @@
 
 class CRM_Uimods_Merge_MergeContact {
 
-  private static $instance = null;
-  private $mergeInformation = [];
+  private static ?CRM_Uimods_Merge_MergeContact $instance = null;
 
-  public static function getInstance() {
+  private array $mergeInformation = [];
+
+  private ?int $mainContactId = null;
+
+  private ?int $secondaryContactId = null;
+
+  public static function getInstance():CRM_Uimods_Merge_MergeContact {
     if (is_null(self::$instance)) {
-      self::$instance = new static();
+      self::$instance = new CRM_Uimods_Merge_MergeContact();
     }
 
     return self::$instance;
@@ -21,12 +26,10 @@ class CRM_Uimods_Merge_MergeContact {
     throw new Exception('__wakeup is not allowed.');
   }
 
-  /**
-   * @param $mergeInformation
-   * @return void
-   */
-  public function setMergeInformation($mergeInformation) {
+  public function setData(array $mergeInformation, int $mainContactId, int $secondaryContactId): void {
     $this->mergeInformation = $mergeInformation;
+    $this->mainContactId = $mainContactId;
+    $this->secondaryContactId = $secondaryContactId;
   }
 
   /**
@@ -45,7 +48,7 @@ class CRM_Uimods_Merge_MergeContact {
     $updateDataItems = [];
     $beforeMergePhones = $this->getBeforeMergeItems('phone');
     $currentSupportPhones = civicrm_api3('Phone', 'get', [
-      'contact_id' => $this->mergeInformation['main_details']['contact_id'],
+      'contact_id' => $this->mainContactId,
       'location_type_id' => $supportLocationTypeId
     ]);
 
@@ -79,6 +82,41 @@ class CRM_Uimods_Merge_MergeContact {
   }
 
   /**
+   * Update birth after marge
+   */
+  public function postMergeFixBirth(): array {
+    $sqlList = [];
+    if (empty($this->mergeInformation)) {
+      return $sqlList;
+    }
+
+    $mainContactBirthDate = CRM_Uimods_Tools_BirthYear::getBirthDateFieldValue($this->mainContactId);
+    $mainContactBirthYear = CRM_Uimods_Tools_BirthYear::getBirthYearFieldValue($this->mainContactId);
+    $secondaryContactBirthDate = CRM_Uimods_Tools_BirthYear::getBirthDateFieldValue($this->secondaryContactId);
+    $secondaryContactBirthYear = CRM_Uimods_Tools_BirthYear::getBirthYearFieldValue($this->secondaryContactId);
+
+    if (empty($mainContactBirthDate) && !empty($secondaryContactBirthDate)) {
+      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthDateSQL($this->mainContactId, $secondaryContactBirthDate);
+    }
+
+    if (empty($mainContactBirthYear) && !empty($secondaryContactBirthYear)) {
+      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $secondaryContactBirthYear);
+    }
+
+    if (!empty($mainContactBirthDate) && !empty($secondaryContactBirthDate)) {
+      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthDateSQL($this->mainContactId, $mainContactBirthDate);
+    }
+
+    if (!empty($mainContactBirthYear) && !empty($secondaryContactBirthYear)) {
+      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $mainContactBirthYear);
+    }
+
+    CRM_Core_Session::setStatus('Fixed year of birth in contact id: ' . $this->mainContactId, ts('Post merge'), 'success');
+
+    return $sqlList;
+  }
+
+  /**
    * Fixes location type for emails after marge
    */
   public function postMergeFixEmails() {
@@ -94,7 +132,7 @@ class CRM_Uimods_Merge_MergeContact {
     $updateDataItems = [];
     $beforeMergeEmails = $this->getBeforeMergeItems('email');
     $currentSupportEmails = civicrm_api3('Email', 'get', [
-      'contact_id' => $this->mergeInformation['main_details']['contact_id'],
+      'contact_id' => $this->mainContactId,
       'location_type_id' => $supportLocationTypeId
     ]);
 
