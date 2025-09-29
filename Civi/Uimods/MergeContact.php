@@ -1,8 +1,16 @@
 <?php
 
-class CRM_Uimods_Merge_MergeContact {
+namespace Civi\Uimods;
 
-  private static ?CRM_Uimods_Merge_MergeContact $instance = null;
+use CiviCRM_API3_Exception;
+use CRM_Core_Session;
+use CRM_Uimods_Tools_BirthYear;
+use DateTime;
+use Exception;
+
+class MergeContact {
+
+  private static ?MergeContact $instance = null;
 
   private array $mergeInformation = [];
 
@@ -10,9 +18,9 @@ class CRM_Uimods_Merge_MergeContact {
 
   private ?int $secondaryContactId = null;
 
-  public static function getInstance():CRM_Uimods_Merge_MergeContact {
+  public static function getInstance():MergeContact {
     if (is_null(self::$instance)) {
-      self::$instance = new CRM_Uimods_Merge_MergeContact();
+      self::$instance = new MergeContact();
     }
 
     return self::$instance;
@@ -81,9 +89,6 @@ class CRM_Uimods_Merge_MergeContact {
     }
   }
 
-  /**
-   * Update birth after marge
-   */
   public function postMergeFixBirth(): array {
     $sqlList = [];
     if (empty($this->mergeInformation)) {
@@ -117,14 +122,13 @@ class CRM_Uimods_Merge_MergeContact {
         $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
       } catch (Exception $e) {}
     }
-    
+
     if (empty($mainContactBirthYear) && empty($secondaryContactBirthYear) && !empty($secondaryContactBirthDate)) {
       try {
         $birthYear = (new DateTime($secondaryContactBirthDate))->format('Y');
         $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
       } catch (Exception $e) {}
     }
-
 
     CRM_Core_Session::setStatus('Fixed year of birth in contact id: ' . $this->mainContactId, ts('Post merge'), 'success');
 
@@ -180,10 +184,6 @@ class CRM_Uimods_Merge_MergeContact {
     }
   }
 
-  /**
-   * @param $locationTypeName
-   * @return false|string
-   */
   private function getLocationTypeId($locationTypeName) {
     if (empty($locationTypeName)) {
       return false;
@@ -200,12 +200,6 @@ class CRM_Uimods_Merge_MergeContact {
     return $locationType['id'];
   }
 
-  /**
-   * Get items which exists before merge by merge info
-   *
-   * @param $entityName
-   * @return array
-   */
   private function getBeforeMergeItems($entityName): array {
     $beforeMergeItems = [];
     foreach ($this->mergeInformation['main_details']['location_blocks'][$entityName] as $beforeMergeItem) {
