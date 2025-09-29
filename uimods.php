@@ -14,8 +14,9 @@
 
 use Civi\Api4\UimodsToken;
 use Civi\Uimods\Hooks\BuildForm\ImproveActivityAssigneesField;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Civi\Uimods\MergeContact;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 require_once 'uimods.civix.php';
 
@@ -23,7 +24,7 @@ require_once 'uimods.civix.php';
  * Implements hook_civicrm_pre()
  */
 function uimods_civicrm_pre($op, $objectName, $id, &$params) {
-  CRM_Uimods_Tools_BirthYear::process_pre($op, $objectName, $id, $params);
+  CRM_Uimods_Tools_BirthYear::processPreHook($op, $objectName, $id, $params);
 
   // GP-815: for newly created contacts:
   if ($op == 'create' && !$id && ($objectName == 'Individual' || $objectName == 'Organization')) {
@@ -47,14 +48,14 @@ function uimods_civicrm_pre($op, $objectName, $id, &$params) {
  * Implements hook_civicrm_post()
  */
 function uimods_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  CRM_Uimods_Tools_BirthYear::process_post($op, $objectName, $objectId, $objectRef);
+  CRM_Uimods_Tools_BirthYear::processPostHook($op, $objectName, $objectId, $objectRef);
 }
 
 /**
  * Implements hook_civicrm_custom
  */
 function uimods_civicrm_custom( $op, $groupID, $entityID, &$params ) {
-  CRM_Uimods_Tools_BirthYear::process_custom($op, $groupID, $entityID, $params);
+  CRM_Uimods_Tools_BirthYear::processCustomHook($op, $groupID, $entityID, $params);
 }
 
 /**
@@ -79,7 +80,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
   // hook in the various renderers
   CRM_Uimods_Tools_MoneyFields::processBuildForm($formName, $form);
   CRM_Uimods_Tools_BankAccount::renderForm($formName, $form);
-  CRM_Uimods_Tools_BirthYear::process_buildForm($formName, $form);
+  CRM_Uimods_Tools_BirthYear::processBuildFormHook($formName, $form);
   CRM_Uimods_Tools_EmailReceipt::process_buildForm($formName, $form);
   switch ($formName) {
     case 'CRM_Contact_Form_Merge':
@@ -313,7 +314,7 @@ function uimods_civicrm_preProcess($formName, &$form) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_validateForm
  */
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
+  CRM_Uimods_Tools_BirthYear::processValidateFormHook($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_DialogerId::processValidateForm($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_MoneyFields::processValidateForm($formName, $fields, $files, $form, $errors);
 }
@@ -370,12 +371,12 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
 
 function uimods_civicrm_merge($type, &$data, $mainContactId = NULL, $secondaryContactId = NULL, $tables = NULL) {
   if ($type == 'form') {
-    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
+    $mergeContact = MergeContact::getInstance();
     $mergeContact->setData($data['migration_info'], $mainContactId, $secondaryContactId);
   }
 
   if ($type == 'sqls') {
-    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
+    $mergeContact = MergeContact::getInstance();
     $mergeContact->postMergeFixEmails();
     $mergeContact->postMergeFixPhones();
 
