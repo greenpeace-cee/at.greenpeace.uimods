@@ -410,4 +410,11 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
     }
   }
 
+  /**
+   * Modify the activity search result table (GP-50054)
+   */
+  public static function adjustActivityTable($objectName, &$headers, &$rows, &$selector) {
+    array_splice($headers, 2, 0, [[ 'name' => 'Campaign' ]]);
+  }
+
 }
