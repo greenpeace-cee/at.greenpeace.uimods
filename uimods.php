@@ -61,7 +61,9 @@ function uimods_civicrm_custom( $op, $groupID, $entityID, &$params ) {
  * Implements hook_civicrm_searchColumns
  */
 function uimods_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selector ) {
-  if ($objectName == 'contribution') {
+  if ($objectName == 'activity') {
+    CRM_Uimods_Tools_SearchTableAdjustments::adjustActivityTable($objectName, $headers, $rows, $selector);
+  } elseif ($objectName == 'contribution') {
     CRM_Uimods_Tools_SearchTableAdjustments::adjustContributionTable($objectName, $headers, $rows, $selector);
   } elseif ($objectName == 'membership') {
     CRM_Uimods_Tools_SearchTableAdjustments::adjustMembershipTable($objectName, $headers, $rows, $selector);
@@ -108,6 +110,16 @@ function uimods_civicrm_buildForm($formName, &$form) {
  *  3) try to apply (patch) the original files and copy to extension
  */
 function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
+  // ACTIVITIES:
+  // modified versions based on CiviCRM 5.69.5
+  //   CRM/Activity/Form/Search.tpl            SHA1: cd7118ad6e31b43a61d2b2609adc4e0a9525f188
+  //   CRM/Contact/Form/Search/Advanced.tpl    SHA1: aa344d1add52e1b28f7eb9f5de8988af5a5ad6cb
+  //   CRM/Activity/Form/Selector.tpl          SHA1: 7f1f3e650a8f03714469afc047c559385ff82bfa
+  if ($tplName == 'CRM/Activity/Form/Search.tpl') {
+    $tplName = 'CRM/Activity/Form/UimodsSearch.tpl';
+  } elseif ($tplName == 'CRM/Contact/Form/Search/Advanced.tpl') {
+    $tplName = 'CRM/Contact/Form/Search/UimodsAdvanced.tpl';
+  }
 
   // MEMBERSHIPS:
   // modified version based on CiviCRM 6.63.3
