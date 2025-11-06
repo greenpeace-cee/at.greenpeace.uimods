@@ -94,7 +94,7 @@
                 <td class="crm-membership-end_date">{$activeMember.end_date|crmDate}</td>
                 <td class="crm-membership-status">{$activeMember.status}</td>
                 <td class="crm-membership-source"><code>{$activeMember.id}</code></td>
-                <td class="crm-membership-auto_renew">{$activeMember.payment_mode}</td>
+                <td class="crm-membership-auto_renew" style="max-width: 250px">{$activeMember.payment_mode}</td>
                 <td class="crm-membership-contract_number">{$activeMember.contract_number}</td>
                 <td>
                     {$activeMember.action|replace:'xx':$activeMember.id}

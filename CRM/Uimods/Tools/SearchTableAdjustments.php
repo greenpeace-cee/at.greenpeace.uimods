@@ -311,16 +311,28 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
     // then: load the custom fields
     $membership_query = civicrm_api3('Membership', 'get', array(
       'id'      => array('IN' => $membership_ids),
-      'return'  => "id,{$annual_field},{$frequency_field},{$pi_field},{$recurring_field}",
+      'return'  => "id,status_id,{$annual_field},{$frequency_field},{$pi_field},{$recurring_field}",
       'options' => array('limit' => 0)));
-
+    $membershipStatusCurrentId = civicrm_api3('MembershipStatus', 'getvalue', [
+      'return' => 'id',
+      'name' => 'Current',
+    ]);
     foreach ($membership_query['values'] as $membership) {
       if (empty($membership[$annual_field])) continue;
+
       $currency = NULL;
+      $nextSchedContributionDate = NULL;
+      $openModifications = civicrm_api3('Contract', 'get_open_modification_counts', [
+        'id' => $membership['id'],
+      ])['values'] ?? [];
       if (!empty($membership[$recurring_field])) {
         $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $membership[$recurring_field]));
         if (!empty($recContribution['currency'])) {
           $currency = $recContribution['currency'];
+        }
+        if (!empty($recContribution['next_sched_contribution']) && $membership['status_id'] == $membershipStatusCurrentId) {
+          $config = CRM_Core_Config::singleton();
+          $nextSchedContributionDate = CRM_Utils_Date::customFormat($recContribution['next_sched_contribution'], $config->dateformatFull);
         }
       }
 
@@ -339,7 +351,11 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
         }
         $payment_mode .= "<br/>(";
         $payment_mode .= CRM_Utils_Money::format($annual_amount/$frequency, $currency);
-        $payment_mode .= " {$payment_frequencies[$frequency]})";
+        $payment_mode .= " {$payment_frequencies[$frequency]}";
+        if (!empty($nextSchedContributionDate) && !$includeEFTWarningIcon && array_sum($openModifications) == 0) {
+          $payment_mode .= ", next: {$nextSchedContributionDate}";
+        }
+        $payment_mode .= ')';
       }
       $payment_mode = str_replace(' ', '&nbsp;', $payment_mode); // avoid linebreaks
 
