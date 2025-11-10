@@ -97,6 +97,12 @@ function uimods_civicrm_buildForm($formName, &$form) {
       if ($form->elementExists('activity_role')) {
         $form->setDefaults(['activity_role' => 0]);
       }
+      break;
+
+    case 'CRM_Contact_Form_Inline_ContactName':
+      // fix overflow issue for form errors
+      CRM_Core_Resources::singleton()->addStyleFile('at.greenpeace.uimods', 'css/contact-name-inline-edit.css');
+      break;
   }
 }
 

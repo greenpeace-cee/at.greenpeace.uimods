@@ -1,0 +1,5 @@
+#crm-contactname-content.crm-inline-edit.form:has(span.crm-error) {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
