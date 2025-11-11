@@ -1,3 +1,9 @@
 <?xml version="1.0"?>
 <menu>
+  <item>
+    <path>civicrm/iap/refresh</path>
+    <page_callback>CRM_Uimods_Page_IapRefresh</page_callback>
+    <title>IAP Refresh</title>
+    <access_arguments>*always allow*</access_arguments>
+  </item>
 </menu>

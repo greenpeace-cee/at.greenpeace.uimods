@@ -484,3 +484,16 @@ function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $t
     );
   }
 }
+
+function uimods_civicrm_alterBundle(CRM_Core_Resources_Bundle $bundle) {
+  if ($bundle->name !== 'coreResources') {
+    return;
+  }
+  if (Civi::settings()->get('iap_session_refresh_enabled')) {
+    // see https://cloud.google.com/iap/docs/external-identity-sessions#using_an_iframe
+    $bundle->addScriptFile('at.greenpeace.uimods', 'js/iap.js');
+    $bundle->addVars('uimods', [
+      'iap_refresh_url' => CRM_Utils_System::url('civicrm/iap/refresh', "gcp-iap-mode=DO_SESSION_REFRESH", TRUE, NULL, FALSE)
+    ]);
+  }
+}
