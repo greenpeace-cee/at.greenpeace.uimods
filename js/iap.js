@@ -3,7 +3,7 @@ CRM.$(document).ready(function () {
 });
 
 function checkSessionRefresh() {
-  if (Date.now() - 600 * 1000 >= parseInt(localStorage.getItem('iap_last_session_refresh'))) {
+  if (Date.now() - 600 * 1000 >= (parseInt(localStorage.getItem('iap_last_session_refresh')) || 0)) {
     addIapIframe();
   } else {
     window.setTimeout(checkSessionRefresh, 60000 + Math.floor(Math.random() * 5000));
