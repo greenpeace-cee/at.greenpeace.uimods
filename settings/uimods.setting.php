@@ -85,4 +85,14 @@ return [
     'is_domain'   => 1,
     'is_contact'  => 0,
   ],
+  'iap_session_refresh_enabled' => [
+    'name'       => 'iap_session_refresh_enabled',
+    'type'       => 'Boolean',
+    'default'    => FALSE,
+    'add'        => '1.10',
+    'title'      => ts('Refresh IAP session periodically?'),
+    'is_domain'  => 1,
+    'is_contact' => 0,
+    'description' => 'Should the Identity-Aware Proxy session be refreshed periodically?',
+  ],
  ];
