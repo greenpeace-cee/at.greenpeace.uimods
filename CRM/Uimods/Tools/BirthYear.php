@@ -13,45 +13,29 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use Civi\Api4\Contact;
+use Civi\Api4\CustomField;
+
 /**
  * Keep birth_date and birth year in sync
  */
 class CRM_Uimods_Tools_BirthYear {
 
-  /**
-   * Get the birth year custom field
-   */
-  protected static $_birthyear_custom_field = NULL;
+  protected static $birthyearCustomField = NULL;
 
-  /**
-   * Is forbid to clear birth year
-   */
-  protected static $_is_forbid_to_clear_birth_year = FALSE;
+  protected static $isForbidToClearBirthYear = FALSE;
 
-  /**
-   * Process pre hook
-   *
-   * @param $op
-   * @param $objectName
-   * @param $id
-   * @param $params
-   */
-  public static function process_pre($op, $objectName, $id, &$params) {
+  public static function processPreHook($op, $objectName, $id, &$params) {
     if ($objectName == 'Individual') {
       if (!array_key_exists('birth_date', $params) && (!empty($params['id']) || !empty($params['contact_id']))) {
-        self::$_is_forbid_to_clear_birth_year = TRUE;
+        self::$isForbidToClearBirthYear = TRUE;
       }
     }
   }
 
-  /**
-   * process POST hook
-   */
-  public static function process_post($op, $objectName, $objectId, &$objectRef) {
-    // fills the custom field with the correct birth year if someone updates CiviCRM's Birth Date field
-
+  public static function processPostHook($op, $objectName, $objectId, &$objectRef) {
     if ($objectRef instanceof CRM_Contact_DAO_Contact) {
-      if (self::$_is_forbid_to_clear_birth_year) {
+      if (self::$isForbidToClearBirthYear) {
         return;
       }
 
@@ -91,15 +75,15 @@ class CRM_Uimods_Tools_BirthYear {
             return;
           }
 
-          self::$_is_forbid_to_clear_birth_year = TRUE;
+          self::$isForbidToClearBirthYear = TRUE;
 
-          //Delete birth_date
-          $result = civicrm_api3('Contact', 'create', array(
+          // Delete birth_date
+          civicrm_api3('Contact', 'create', [
             'id' => $objectRef->id,
             'birth_date' => '',
-          ));
+          ]);
 
-          self::$_is_forbid_to_clear_birth_year = FALSE;
+          self::$isForbidToClearBirthYear = FALSE;
 
           return;
         }
@@ -111,18 +95,17 @@ class CRM_Uimods_Tools_BirthYear {
 
       $birthYearField = self::getCustomField();
       // Update birth year custom field with new value
-      $customValues = civicrm_api3('CustomValue', 'create', array(
+      civicrm_api3('CustomValue', 'create', [
         'entity_id' => $objectRef->id,
         "custom_{$birthYearField['id']}" => $contactBirthYear,
-      ));
-
+      ]);
     }
   }
 
   /**
    * process CUSTOM hook
    */
-  public static function process_custom( $op, $groupID, $entityID, &$params ) {
+  public static function processCustomHook($op, $groupID, $entityID, &$params ) {
     $className = CRM_Utils_Request::retrieve('class_name', 'String');
 
     if ($className != 'CRM_Contact_Form_Inline_CustomData') {
@@ -137,7 +120,6 @@ class CRM_Uimods_Tools_BirthYear {
     }
 
     // deletes the values CiviCRM's Birth Date field if someone updates the custom field with a year that is contradictory to the birth date
-
     foreach ($params as $entity) {
       if (!empty($entity['entity_table']) && $entity['entity_table'] == 'civicrm_contact') {
         if (($birthYearField['column_name'] == $entity['column_name'])
@@ -145,18 +127,18 @@ class CRM_Uimods_Tools_BirthYear {
         ) {
           // birth_year field was written
           // Get value of birth_year field
-          $customValues = civicrm_api3('CustomValue', 'get', array(
+          $customValues = civicrm_api3('CustomValue', 'get', [
             'entity_id' => $entity['entity_id'],
             'return.custom_'.$birthYearField['id'] => 1,
-          ));
+          ]);
           $birthYear = $customValues['values'][$birthYearField['id']][0];
 
           // Get contact ID birth date field ($params['entity_id'])
           try {
-            $contactBirthDate = civicrm_api3('Contact', 'getsingle', array(
+            $contactBirthDate = civicrm_api3('Contact', 'getsingle', [
               'return' => "birth_date",
               'id' => $entity['entity_id'],
-            ));
+            ]);
           }
           catch (Exception $e) {
             //getsingle throws exception if not found
@@ -172,15 +154,15 @@ class CRM_Uimods_Tools_BirthYear {
             }
             // Is birth date = birth year? (Match only long format)
             if ($contactBirthYear->format('Y') != $birthYear) {
-              self::$_is_forbid_to_clear_birth_year = TRUE;
+              self::$isForbidToClearBirthYear = TRUE;
 
-              //Delete birth_date
-              $result = civicrm_api3('Contact', 'create', array(
+              // Delete birth_date
+              civicrm_api3('Contact', 'create', [
                 'id' => $entity['entity_id'],
                 'birth_date' => '',
-              ));
+              ]);
 
-              self::$_is_forbid_to_clear_birth_year = FALSE;
+              self::$isForbidToClearBirthYear = FALSE;
             }
           }
         }
@@ -188,47 +170,32 @@ class CRM_Uimods_Tools_BirthYear {
     }
   }
 
-
-  /**
-   * process CUSTOM hook
-   */
-  public static function process_buildForm($formName, &$form) {
+  public static function processBuildFormHook($formName, &$form): void {
     if ($formName == 'CRM_Contact_Form_Inline_CustomData') {
-      $birthyear_field = self::getCustomField();
-      if ($birthyear_field) {
+      $birthyearField = self::getCustomField();
+      if ($birthyearField) {
         $script = file_get_contents(__DIR__ . '/../../../js/extended_demographics_edit.js');
-        $script = str_replace('BIRTH_YEAR_FIELD', $birthyear_field['id'], $script);
-        CRM_Core_Region::instance('page-footer')->add(array(
+        $script = str_replace('BIRTH_YEAR_FIELD', $birthyearField['id'], $script);
+        CRM_Core_Region::instance('page-footer')->add([
           'script' => $script,
-          ));
+        ]);
       }
     }
   }
 
-
   /**
    * Get the birthyear field (cached)
-   *
-   * copied from uk.co.mjwconsulting.birthyear
+   * Copied from uk.co.mjwconsulting.birthyear
    */
   public static function getCustomField() {
-    if (self::$_birthyear_custom_field === NULL) {
-      // load custom field data
-      self::$_birthyear_custom_field = civicrm_api3('CustomField', 'getsingle', array('name' => "birth_year"));
+    if (self::$birthyearCustomField === NULL) {
+      self::$birthyearCustomField = civicrm_api3('CustomField', 'getsingle', array('name' => "birth_year"));
     }
-    return self::$_birthyear_custom_field;
+
+    return self::$birthyearCustomField;
   }
 
-  /**
-   * Process validateForm hook
-   *
-   * @param $formName
-   * @param $fields
-   * @param $files
-   * @param $form
-   * @param $errors
-   */
-  public static function process_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  public static function processValidateFormHook($formName, &$fields, &$files, &$form, &$errors) {
     if ($formName == 'CRM_Contact_Form_Contact') {
       $birthYearField = self::getCustomField();
       $birthYearElementName = $form->_groupTree[$birthYearField['custom_group_id']]['fields'][$birthYearField['id']]['element_name'];
@@ -248,6 +215,105 @@ class CRM_Uimods_Tools_BirthYear {
         $errors['birth_date'] = ts('The Birth Date should be the same as Year of Birth');
       }
     }
+  }
+
+  public static function getBirthYearFieldCustomField() {
+    $customFields = CustomField::get(false)
+      ->addSelect('custom_group_id', 'custom_group_id.table_name', 'name', 'column_name', 'custom_group_id.name')
+      ->addWhere('custom_group_id:name', '=', 'additional_demographics')
+      ->addWhere('name', '=', 'birth_year')
+      ->setLimit(1)
+      ->execute();
+
+    foreach ($customFields as $customField) {
+      return $customField;
+    }
+
+    return [];
+  }
+
+  public static function getBirthYearFieldValue($contactId) {
+    $contacts = Contact::get(false)
+      ->addSelect('id', 'additional_demographics.birth_year')
+      ->addWhere('id', '=', $contactId)
+      ->setLimit(1)
+      ->execute();
+
+    $contact = $contacts->first();
+
+    if (!empty($contact)) {
+      return $contact['additional_demographics.birth_year'];
+    }
+
+    return null;
+  }
+
+  public static function getBirthDateFieldValue($contactId) {
+    $contacts = Contact::get(false)
+      ->addSelect('id', 'birth_date')
+      ->addWhere('id', '=', $contactId)
+      ->setLimit(1)
+      ->execute();
+
+    $contact = $contacts->first();
+
+    if (!empty($contact)) {
+      return $contact['birth_date'];
+    }
+
+    return null;
+  }
+
+  public static function getSetBirthYearSQL($contactId, $birthYear): string {
+    $customField = CRM_Uimods_Tools_BirthYear::getBirthYearFieldCustomField();
+    $tableName = $customField['custom_group_id.table_name'];
+
+    return CRM_Uimods_Tools_BirthYear::getSetCustomFieldSQL($contactId, $tableName, $customField['column_name'], $birthYear, 'String');
+  }
+
+  public static function getSetBirthDateSQL($contactId, $birthDate): string {
+    return CRM_Core_DAO::composeQuery(
+      'UPDATE civicrm_contact SET birth_date = %1 WHERE id = %2',
+      [
+        1 => [$birthDate, 'String'],
+        2 => [$contactId, 'Integer']
+      ]
+    );
+  }
+
+  public static function isCustomFieldEntityExist($tableName, $entityId): string {
+    $customFieldEntity = CRM_Core_DAO::executeQuery(
+      'SELECT * FROM ' . $tableName . ' WHERE entity_id = %1',
+      [
+        1 => [$entityId, 'Integer']
+      ]
+    );
+
+    while ($customFieldEntity->fetch()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public static function getSetCustomFieldSQL($entityId, $tableName, $columnName, $value, $valueType): string {
+    if (CRM_Uimods_Tools_BirthYear::isCustomFieldEntityExist($tableName, $entityId)) {
+      return CRM_Core_DAO::composeQuery(
+        'UPDATE ' . $tableName . ' SET ' . $columnName . ' = %2 WHERE entity_id = %1',
+        [
+          1 => [$entityId, 'Integer'],
+          2 => [$value, $valueType]
+        ]
+      );
+    }
+
+    return CRM_Core_DAO::composeQuery(
+      'INSERT INTO ' . $tableName . ' (entity_id, ' . $columnName . ') VALUES(%1, %2)',
+      [
+        1 => [$entityId, 'Integer'],
+        2 => [$value, $valueType]
+      ]
+    );
   }
 
 }
