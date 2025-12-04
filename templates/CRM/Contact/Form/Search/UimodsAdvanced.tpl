@@ -61,6 +61,10 @@
       {if $resultFile}
         {if $resultFile == "CRM/Activity/Form/Selector.tpl"}
           {assign var="resultFile" value="CRM/Activity/Form/UimodsSelector.tpl"}
+        {elseif $resultFile == "CRM/Contribute/Form/Selector.tpl"}
+          {assign var="resultFile" value="CRM/Contribute/Form/UimodsSelector.tpl"}
+        {elseif $resultFile == "CRM/Member/Form/Selector.tpl"}
+          {assign var="resultFile" value="CRM/Member/Form/UimodsSelector.tpl"}
         {/if}
 
         {if $resultContext}
