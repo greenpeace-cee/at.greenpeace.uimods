@@ -11,7 +11,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
- 
+
 /**
  * Class to render CiviBanking accounts
  */
@@ -38,7 +38,7 @@ class CRM_Uimods_Tools_BankAccount {
           foreach ($custom_field_ids as $custom_field_id) {
             if (isset($groupCustomData['fields'][$custom_field_id]['field_value'])) {
               $groupCustomData['fields'][$custom_field_id]['field_value'] =
-                self::renderBankAccount($groupCustomData['fields'][$custom_field_id]['field_value']);
+                self::renderBankAccount($groupCustomData['fields'][$custom_field_id]['data']);
               $modified = TRUE;
             }
           }
@@ -115,13 +115,13 @@ class CRM_Uimods_Tools_BankAccount {
 
   /**
    * Will render a bank account for the UI
-   * 
+   *
    * @return HTML snippet
    */
   public static function renderBankAccount($ba_id) {
     $ba_id = (int) $ba_id;
     $reference = self::getPrimaryBankAccountReference($ba_id);
-    
+
     if (empty($ba_id)) {
       return "(not set)";
     } elseif (empty($reference)) {
@@ -133,7 +133,7 @@ class CRM_Uimods_Tools_BankAccount {
         return $reference;
       } else {
         $link = CRM_Utils_System::url('civicrm/contact/view', "reset=1&amp;cid={$ba['contact_id']}&amp;selectedChild=bank_accounts");
-        return "<a href=\"{$link}\">{$reference}</a>";        
+        return "<a href=\"{$link}\">{$reference}</a>";
       }
     }
   }
@@ -151,7 +151,7 @@ class CRM_Uimods_Tools_BankAccount {
       switch ($references->reference_type) {
         case 'IBAN':
           return $references->reference;
-        
+
         case 'NBAN_AT':
           $NBAN_AT_references[] = $references->reference;
           break;
