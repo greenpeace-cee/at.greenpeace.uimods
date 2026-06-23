@@ -224,7 +224,7 @@ class CRM_Uimods_Config {
 
     // determine custom groups/fields showing bank accounts
     $uimods_config['account_custom_fields'] = array();
-    $known_columns = array('to_ba', 'from_ba', 'ch_to_ba', 'ch_from_ba');
+    $known_columns = array('to_ba', 'from_ba', 'refund_account', 'ch_to_ba', 'ch_from_ba');
     $custom_fields = civicrm_api3('CustomField', 'get', array(
       'column_name' => array('IN' => $known_columns),
       'is_active'   => 1,
