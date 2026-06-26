@@ -9,7 +9,7 @@ use Civi\Core\Service\AutoSubscriber;
 class ImproveActivityAssigneesField extends AutoSubscriber {
 
   public static function getSubscribedEvents(): array {
-    return ['hook_civicrm_buildForm' => ['run', -20],];
+    return ['hook_civicrm_buildForm' => ['run', -20]];
   }
 
   public static function run(GenericHookEvent $event): void {
