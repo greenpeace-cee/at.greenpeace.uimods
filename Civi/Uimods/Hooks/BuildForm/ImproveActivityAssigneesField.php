@@ -4,11 +4,16 @@ namespace Civi\Uimods\Hooks\BuildForm;
 
 use Civi;
 use Civi\Core\Event\GenericHookEvent;
+use Civi\Core\Service\AutoSubscriber;
 
-class ImproveActivityAssigneesField {
+class ImproveActivityAssigneesField extends AutoSubscriber {
+
+  public static function getSubscribedEvents(): array {
+    return ['hook_civicrm_buildForm' => ['run', -20],];
+  }
 
   public static function run(GenericHookEvent $event): void {
-    if (!self::isNeedToRun($event)) {
+    if (!ImproveActivityAssigneesField::isNeedToRun($event)) {
       return;
     }
 
