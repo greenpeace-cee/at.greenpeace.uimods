@@ -194,10 +194,6 @@ function uimods_civicrm_pageRun( &$page ) {
       $emailIdsMap[$key] =  $email['id'];
     }
     CRM_Core_Resources::singleton()->addVars('emailIdsMap', $emailIdsMap);
-    CRM_Core_Region::instance('page-header')->add([
-      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/add_create_supportcase_links.js'),
-    ]);
-    CRM_Core_Resources::singleton()->addStyleFile('at.greenpeace.uimods', 'css/viewContactSummary.css');
 
     $script = file_get_contents(__DIR__ . '/js/summary_view.js');
     $script = str_replace('EXTENDED_DEMOGRAPHICS', CRM_Uimods_Config::getExtendedDemographicsGroupID(), $script);
