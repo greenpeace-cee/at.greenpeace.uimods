@@ -74,8 +74,8 @@ class CRM_Uimods_Tools_SearchTableAdjustments {
    */
   public static function adjustMembershipTableSmarty() {
     $smarty = CRM_Core_Smarty::singleton();
-    $activeMembers   = $smarty->get_template_vars('activeMembers');
-    $inActiveMembers = $smarty->get_template_vars('inActiveMembers');
+    $activeMembers   = $smarty->getTemplateVars('activeMembers');
+    $inActiveMembers = $smarty->getTemplateVars('inActiveMembers');
     if (empty($activeMembers) && empty($inActiveMembers)) {
       return;
     }
