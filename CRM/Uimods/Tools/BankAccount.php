@@ -11,7 +11,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
- 
+
 /**
  * Class to render CiviBanking accounts
  */
@@ -27,7 +27,7 @@ class CRM_Uimods_Tools_BankAccount {
    */
   public static function renderForm($formName, &$form) {
     if ($formName == 'CRM_Contribute_Form_ContributionView') {
-      $viewCustomData = $form->get_template_vars('viewCustomData');
+      $viewCustomData = $form->getTemplateVars('viewCustomData');
       // $contact_id = self::getContactID($form);
       $modified = FALSE;
 
@@ -103,10 +103,10 @@ class CRM_Uimods_Tools_BankAccount {
    * tries to extract the contact ID from the given form
    */
   public static function getContactID(&$form) {
-    $contact_id = $form->get_template_vars('contact_id');
+    $contact_id = $form->getTemplateVars('contact_id');
     if (empty($contact_id)) {
       // try another type...
-      $contact_id = $form->get_template_vars('contactId');
+      $contact_id = $form->getTemplateVars('contactId');
     }
 
     return $contact_id;
@@ -115,13 +115,13 @@ class CRM_Uimods_Tools_BankAccount {
 
   /**
    * Will render a bank account for the UI
-   * 
+   *
    * @return HTML snippet
    */
   public static function renderBankAccount($ba_id) {
     $ba_id = (int) $ba_id;
     $reference = self::getPrimaryBankAccountReference($ba_id);
-    
+
     if (empty($ba_id)) {
       return "(not set)";
     } elseif (empty($reference)) {
@@ -133,7 +133,7 @@ class CRM_Uimods_Tools_BankAccount {
         return $reference;
       } else {
         $link = CRM_Utils_System::url('civicrm/contact/view', "reset=1&amp;cid={$ba['contact_id']}&amp;selectedChild=bank_accounts");
-        return "<a href=\"{$link}\">{$reference}</a>";        
+        return "<a href=\"{$link}\">{$reference}</a>";
       }
     }
   }
@@ -151,7 +151,7 @@ class CRM_Uimods_Tools_BankAccount {
       switch ($references->reference_type) {
         case 'IBAN':
           return $references->reference;
-        
+
         case 'NBAN_AT':
           $NBAN_AT_references[] = $references->reference;
           break;

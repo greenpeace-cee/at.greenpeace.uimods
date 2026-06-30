@@ -189,7 +189,7 @@ function uimods_civicrm_pageRun( &$page ) {
     // because in the core template doesn't use email id :(
     $emailIdsMap = [];
     $smarty = CRM_Core_Smarty::singleton();
-    $emails = $smarty->get_template_vars('email');
+    $emails = $smarty->getTemplateVars('email');
     foreach ($emails as $key => $email) {
       $emailIdsMap[$key] =  $email['id'];
     }
@@ -212,19 +212,19 @@ function uimods_civicrm_pageRun( &$page ) {
     }
 
     $uimods = array(
-      'privacy' => $page->get_template_vars('privacy'),
+      'privacy' => $page->getTemplateVars('privacy'),
       'supportId' => $supportId,
     );
 
     if ($page_name == 'CRM_Contact_Page_Inline_Email') {
-      $uimods['email'] = $page->get_template_vars('email');
+      $uimods['email'] = $page->getTemplateVars('email');
       $uimods['form'] = 'email';
     } elseif ($page_name == 'CRM_Contact_Page_Inline_Phone') {
-      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['phone'] = $page->getTemplateVars('phone');
       $uimods['form'] = 'phone';
     } else {
-      $uimods['email'] = $page->get_template_vars('email');
-      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['email'] = $page->getTemplateVars('email');
+      $uimods['phone'] = $page->getTemplateVars('phone');
       $uimods['form'] = 'both';
     }
 
