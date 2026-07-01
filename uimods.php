@@ -13,9 +13,9 @@
 +--------------------------------------------------------*/
 
 use Civi\Api4\UimodsToken;
-use Civi\Uimods\Hooks\BuildForm\ImproveActivityAssigneesField;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Civi\Uimods\MergeContact;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 require_once 'uimods.civix.php';
 
@@ -23,7 +23,7 @@ require_once 'uimods.civix.php';
  * Implements hook_civicrm_pre()
  */
 function uimods_civicrm_pre($op, $objectName, $id, &$params) {
-  CRM_Uimods_Tools_BirthYear::process_pre($op, $objectName, $id, $params);
+  CRM_Uimods_Tools_BirthYear::processPreHook($op, $objectName, $id, $params);
 
   // GP-815: for newly created contacts:
   if ($op == 'create' && !$id && ($objectName == 'Individual' || $objectName == 'Organization')) {
@@ -47,14 +47,14 @@ function uimods_civicrm_pre($op, $objectName, $id, &$params) {
  * Implements hook_civicrm_post()
  */
 function uimods_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  CRM_Uimods_Tools_BirthYear::process_post($op, $objectName, $objectId, $objectRef);
+  CRM_Uimods_Tools_BirthYear::processPostHook($op, $objectName, $objectId, $objectRef);
 }
 
 /**
  * Implements hook_civicrm_custom
  */
 function uimods_civicrm_custom( $op, $groupID, $entityID, &$params ) {
-  CRM_Uimods_Tools_BirthYear::process_custom($op, $groupID, $entityID, $params);
+  CRM_Uimods_Tools_BirthYear::processCustomHook($op, $groupID, $entityID, $params);
 }
 
 /**
@@ -81,7 +81,7 @@ function uimods_civicrm_buildForm($formName, &$form) {
   // hook in the various renderers
   CRM_Uimods_Tools_MoneyFields::processBuildForm($formName, $form);
   CRM_Uimods_Tools_BankAccount::renderForm($formName, $form);
-  CRM_Uimods_Tools_BirthYear::process_buildForm($formName, $form);
+  CRM_Uimods_Tools_BirthYear::processBuildFormHook($formName, $form);
   CRM_Uimods_Tools_EmailReceipt::process_buildForm($formName, $form);
   switch ($formName) {
     case 'CRM_Contact_Form_Merge':
@@ -189,15 +189,11 @@ function uimods_civicrm_pageRun( &$page ) {
     // because in the core template doesn't use email id :(
     $emailIdsMap = [];
     $smarty = CRM_Core_Smarty::singleton();
-    $emails = $smarty->get_template_vars('email');
+    $emails = $smarty->getTemplateVars('email');
     foreach ($emails as $key => $email) {
       $emailIdsMap[$key] =  $email['id'];
     }
     CRM_Core_Resources::singleton()->addVars('emailIdsMap', $emailIdsMap);
-    CRM_Core_Region::instance('page-header')->add([
-      'scriptUrl' => CRM_Uimods_ExtensionUtil::url('js/add_create_supportcase_links.js'),
-    ]);
-    CRM_Core_Resources::singleton()->addStyleFile('at.greenpeace.uimods', 'css/viewContactSummary.css');
 
     $script = file_get_contents(__DIR__ . '/js/summary_view.js');
     $script = str_replace('EXTENDED_DEMOGRAPHICS', CRM_Uimods_Config::getExtendedDemographicsGroupID(), $script);
@@ -216,19 +212,19 @@ function uimods_civicrm_pageRun( &$page ) {
     }
 
     $uimods = array(
-      'privacy' => $page->get_template_vars('privacy'),
+      'privacy' => $page->getTemplateVars('privacy'),
       'supportId' => $supportId,
     );
 
     if ($page_name == 'CRM_Contact_Page_Inline_Email') {
-      $uimods['email'] = $page->get_template_vars('email');
+      $uimods['email'] = $page->getTemplateVars('email');
       $uimods['form'] = 'email';
     } elseif ($page_name == 'CRM_Contact_Page_Inline_Phone') {
-      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['phone'] = $page->getTemplateVars('phone');
       $uimods['form'] = 'phone';
     } else {
-      $uimods['email'] = $page->get_template_vars('email');
-      $uimods['phone'] = $page->get_template_vars('phone');
+      $uimods['email'] = $page->getTemplateVars('email');
+      $uimods['phone'] = $page->getTemplateVars('phone');
       $uimods['form'] = 'both';
     }
 
@@ -255,11 +251,6 @@ function uimods_civicrm_config(&$config) {
   Civi::dispatcher()->addListener(
     'hook_civicrm_inboundSMS',
     'CRM_Uimods_SMS_Listener::inboundSMS',
-    PHP_INT_MAX - 1
-  );
-  Civi::dispatcher()->addListener(
-    'hook_civicrm_buildForm',
-    ImproveActivityAssigneesField::class . '::run',
     PHP_INT_MAX - 1
   );
 }
@@ -325,7 +316,7 @@ function uimods_civicrm_preProcess($formName, &$form) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_validateForm
  */
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  CRM_Uimods_Tools_BirthYear::process_validateForm($formName, $fields, $files, $form, $errors);
+  CRM_Uimods_Tools_BirthYear::processValidateFormHook($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_DialogerId::processValidateForm($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_MoneyFields::processValidateForm($formName, $fields, $files, $form, $errors);
 }
@@ -380,16 +371,21 @@ function uimods_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], 
   }
 }
 
-function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
+function uimods_civicrm_merge($type, &$data, $mainContactId = NULL, $secondaryContactId = NULL, $tables = NULL) {
   if ($type == 'form') {
-    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
-    $mergeContact->setMergeInformation($data['migration_info']);
+    $mergeContact = MergeContact::getInstance();
+    $mergeContact->setData($data['migration_info'], $mainContactId, $secondaryContactId);
   }
 
   if ($type == 'sqls') {
-    $mergeContact = CRM_Uimods_Merge_MergeContact::getInstance();
+    $mergeContact = MergeContact::getInstance();
     $mergeContact->postMergeFixEmails();
     $mergeContact->postMergeFixPhones();
+
+    $sqlList = $mergeContact->postMergeFixBirth();
+    foreach ($sqlList as $sql) {
+      $data[] = $sql;
+    }
   }
 
   if ($type == 'sqls') {
@@ -402,8 +398,8 @@ function uimods_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $t
     $data[] = CRM_Core_DAO::composeQuery(
       'DELETE FROM civicrm_uimods_token WHERE contact_id IN (%1, %2)',
       [
-        1 => [$mainId, 'Integer'],
-        2 => [$otherId, 'Integer']
+        1 => [$mainContactId, 'Integer'],
+        2 => [$secondaryContactId, 'Integer']
       ]
     );
   }

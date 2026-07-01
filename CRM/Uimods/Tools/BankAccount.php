@@ -27,7 +27,7 @@ class CRM_Uimods_Tools_BankAccount {
    */
   public static function renderForm($formName, &$form) {
     if ($formName == 'CRM_Contribute_Form_ContributionView') {
-      $viewCustomData = $form->get_template_vars('viewCustomData');
+      $viewCustomData = $form->getTemplateVars('viewCustomData');
       // $contact_id = self::getContactID($form);
       $modified = FALSE;
 
@@ -103,10 +103,10 @@ class CRM_Uimods_Tools_BankAccount {
    * tries to extract the contact ID from the given form
    */
   public static function getContactID(&$form) {
-    $contact_id = $form->get_template_vars('contact_id');
+    $contact_id = $form->getTemplateVars('contact_id');
     if (empty($contact_id)) {
       // try another type...
-      $contact_id = $form->get_template_vars('contactId');
+      $contact_id = $form->getTemplateVars('contactId');
     }
 
     return $contact_id;

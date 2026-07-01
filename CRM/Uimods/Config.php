@@ -13,7 +13,6 @@
 +--------------------------------------------------------*/
 
 define('UIMODS_CONFIG',       'at_greenpeace_uimods_config');
-define('UIMODS_CONFIG_GROUP', 'at_greenpeace_uimods');
 
 /**
  * Store configuration values
@@ -41,12 +40,12 @@ class CRM_Uimods_Config {
    */
   protected function __construct() {
     // self::updateConfig(); // only for debugging
-    $this->config_data = civicrm_api3('Setting', 'getvalue', array('name' => UIMODS_CONFIG, 'group' => UIMODS_CONFIG_GROUP));
+    $this->config_data = Civi::settings()->get(UIMODS_CONFIG);
 
     if (empty($this->config_data)) {
       // if it's empty, try reloading
       self::updateConfig();
-      $this->config_data = civicrm_api3('Setting', 'getvalue', array('name' => UIMODS_CONFIG, 'group' => UIMODS_CONFIG_GROUP));
+      $this->config_data = Civi::settings()->get(UIMODS_CONFIG);
     }
   }
 
@@ -235,8 +234,7 @@ class CRM_Uimods_Config {
     }
 
     // finally, store the settings
-    // API doesn't work during install: civicrm_api3('Setting', 'create', array(UIMODS_CONFIG => $uimods_config));
-    CRM_Core_BAO_Setting::setItem($uimods_config, UIMODS_CONFIG_GROUP, UIMODS_CONFIG);
+    Civi::settings()->set(UIMODS_CONFIG, $uimods_config);
   }
 
   /**
