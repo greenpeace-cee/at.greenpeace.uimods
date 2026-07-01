@@ -7,6 +7,7 @@ use Civi\Core\Event\GenericHookEvent;
 use Civi\Core\Service\AutoSubscriber;
 use Civi\Uimods\AssetInjector;
 use CRM_Contact_Page_View_Summary;
+use CRM_Contact_Page_Inline_Email;
 
 class SupportcaseLinks extends AutoSubscriber {
 
@@ -15,11 +16,14 @@ class SupportcaseLinks extends AutoSubscriber {
   }
 
   public static function run(GenericHookEvent $event): void {
-    if (get_class($event->page) !== CRM_Contact_Page_View_Summary::class) {
+    if (!in_array(get_class($event->page), [
+      CRM_Contact_Page_View_Summary::class,
+      CRM_Contact_Page_Inline_Email::class
+    ])) {
       return;
     }
 
-    AssetInjector::addScriptInline('js/supportcaseLinks.js');
+    AssetInjector::addScript('js/supportcaseLinks.js');
     AssetInjector::addCssStyles('css/supportcaseLinks.css');
   }
 
