@@ -31,7 +31,7 @@ class ImproveActivityAssigneesField {
   }
 
   private static function isNeedToRun(GenericHookEvent $event): bool {
-    if (!in_array($event->formName, ['CRM_Activity_Form_Activity', 'CRM_Fastactivity_Form_Add'])) {
+    if (!in_array($event->formName, ['CRM_Activity_Form_Activity', 'CRM_Fastactivity_Form_Add', 'CRM_Case_Form_Activity'])) {
       return false;
     }
 
