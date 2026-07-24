@@ -41,7 +41,7 @@ class ValidateSubjectAfterChangeCaseStatus extends AutoSubscriber {
   public static function getCaseStatusId(int $caseId): string {
     $case = \Civi\Api4\CiviCase::get(FALSE)
       ->addSelect('status_id')
-      ->addWhere('id', '=', 3)
+      ->addWhere('id', '=', $caseId)
       ->setLimit(1)
       ->execute()
       ->first();
