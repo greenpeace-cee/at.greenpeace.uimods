@@ -33,7 +33,7 @@ class CRM_Uimods_Merge_MergeContact {
    * Fixes location type for phones after marge
    */
   public function postMergeFixPhones() {
-    if (empty($this->mergeInformation)) {
+    if (empty($this->mergeInformation['main_details']['contact_id'])) {
       return;
     }
 
@@ -82,7 +82,7 @@ class CRM_Uimods_Merge_MergeContact {
    * Fixes location type for emails after marge
    */
   public function postMergeFixEmails() {
-    if (empty($this->mergeInformation)) {
+    if (empty($this->mergeInformation['main_details']['contact_id'])) {
       return;
     }
 
