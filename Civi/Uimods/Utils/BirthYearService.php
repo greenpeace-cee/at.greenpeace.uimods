@@ -11,7 +11,7 @@ class BirthYearService {
   protected static bool $isAllowToUpdateBirthYear = true;
 
   public static function forbidToUpdateBirthYear() {
-    BirthYearService::$isAllowToUpdateBirthYear = TRUE;
+    BirthYearService::$isAllowToUpdateBirthYear = false;
   }
 
   public static function allowToUpdateBirthYear() {
