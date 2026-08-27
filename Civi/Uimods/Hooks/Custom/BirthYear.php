@@ -30,7 +30,8 @@ class BirthYear extends AutoSubscriber {
       return;
     }
 
-    // deletes the values CiviCRM's Birth Date field if someone updates the custom field with a year that is contradictory to the birth date
+    // deletes the values CiviCRM's Birth Date field if someone updates the custom field
+    // with a year that is contradictory to the birth date
     foreach ($event->params as $entity) {
       if (empty($entity['entity_table'])) {
         continue;
@@ -40,49 +41,29 @@ class BirthYear extends AutoSubscriber {
         continue;
       }
 
-      if ($birthYearField['column_name'] !== $entity['column_name']) {
+      if ((int) $birthYearField['id'] != (int) $entity['custom_field_id']) {
         continue;
       }
 
-      if ($birthYearField['custom_group_id'] !== $entity['custom_group_id']) {
-        continue;
-      }
-
-      // birth_year field was written
-      // Get value of birth_year field
-      $customValues = civicrm_api3('CustomValue', 'get', [
-        'entity_id' => $entity['entity_id'],
-        'return.custom_' . $birthYearField['id'] => 1,
-      ]);
-      $birthYear = $customValues['values'][$birthYearField['id']][0];
-
-      // Get contact ID birth date field ($event->params['entity_id'])
-      try {
-        $contactBirthDate = civicrm_api3('Contact', 'getsingle', [
-          'return' => "birth_date",
-          'id' => $entity['entity_id'],
-        ]);
-      }
-      catch (Exception $e) {
-        //getsingle throws exception if not found
+      $birthYear = BirthYearService::getBirthYearFieldValue($entity['entity_id']);
+      $birthDate = BirthYearService::getBirthDateFieldValue($entity['entity_id']);
+      if (empty($birthDate)) {
         return;
       }
-      // Contact birth date to year
-      if (!empty($contactBirthDate['birth_date'])) {
-        try {
-          $contactBirthYear = new DateTime($contactBirthDate['birth_date']);
-        }
-        catch (Exception $e) {
-          return;
-        }
 
-        // Is birth date = birth year? (Match only long format)
-        if ($contactBirthYear->format('Y') != $birthYear) {
-          BirthYearService::forbidToUpdateBirthYear();
-          BirthYearService::clearBirthDate($entity['entity_id']);
-          BirthYearService::allowToUpdateBirthYear();
-        }
+      try {
+        $birthYearDateTime = new DateTime($birthDate);
+      } catch (Exception $e) {
+        return;
       }
+
+      if ($birthYearDateTime->format('Y') == $birthYear) {
+        return;
+      }
+
+      BirthYearService::forbidToUpdateBirthYear();
+      BirthYearService::clearBirthDate($entity['entity_id']);
+      BirthYearService::allowToUpdateBirthYear();
     }
   }
 

@@ -120,10 +120,21 @@ class BirthYearService {
       ]
     );
   }
+
   public static function clearBirthDate($contactId): void {
     civicrm_api3('Contact', 'create', [
       'id' => $contactId,
       'birth_date' => '',
     ]);
   }
+
+  public static function saveBirthYear($contactId, $birthYear): void {
+    $birthYearField = BirthYearService::getBirthYearCustomField();
+
+    civicrm_api3('CustomValue', 'create', [
+      'entity_id' => $contactId,
+      "custom_{$birthYearField['id']}" => $birthYear,
+    ]);
+  }
+
 }

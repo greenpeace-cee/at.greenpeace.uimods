@@ -18,7 +18,6 @@ class BirthYear extends AutoSubscriber {
       return;
     }
 
-
     $isBirthDateFiledExist = property_exists($event->object, 'birth_date');
 
     if (!$isBirthDateFiledExist && (!empty($event->object->id) || !empty($event->object->contact_id))) {
