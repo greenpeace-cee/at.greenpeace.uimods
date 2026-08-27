@@ -25,34 +25,17 @@ class BirthYear extends AutoSubscriber {
       return;
     }
 
+    if (empty($event->object->birth_date)) {
+      return;
+    }
+
     try {
-      $birtDateDateTime = new DateTime($event->object->birth_date);
+      $newBirtDateDateTime = new DateTime($event->object->birth_date);
     } catch (Exception $e) {
       return;
     }
 
-    if (!empty($event->object->birth_date) && $event->object->birth_date != 'null') {
-      BirthYearService::saveBirthYear($event->object->id, $birtDateDateTime->format('Y'));
-      return;
-    }
-
-    $birthDate = BirthYearService::getBirthDateFieldValue($event->object->id);
-    if (empty($birthDate)) {
-      return;
-    }
-
-    $birthYear = BirthYearService::getBirthYearFieldValue($event->object->id);
-    if (empty($birthYear)) {
-      return;
-    }
-
-    if ($birtDateDateTime->format('Y') == $birthYear) {
-      return;
-    }
-
-    BirthYearService::forbidToUpdateBirthYear();
-    BirthYearService::clearBirthDate($event->object->id);
-    BirthYearService::allowToUpdateBirthYear();
+    BirthYearService::saveBirthYear($event->object->id, $newBirtDateDateTime->format('Y'));
   }
 
 }
