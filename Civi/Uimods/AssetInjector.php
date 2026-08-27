@@ -14,13 +14,17 @@ class AssetInjector {
     ]);
   }
 
-  public static function addScriptInline($scriptUrl, $location = 'page-header'): void {
+  public static function addScriptInline($scriptUrl, $location, $replaces): void {
     $file = CRM_Uimods_ExtensionUtil::path($scriptUrl);
     if (!file_exists($file)) {
       return;
     }
 
     $scriptContent = file_get_contents($file);
+    foreach ($replaces as $replaceFrom => $replaceTo) {
+      $scriptContent = str_replace($replaceFrom, $replaceTo, $scriptContent);
+    }
+
     CRM_Core_Region::instance($location)->add(['script' => $scriptContent]);
   }
 

@@ -20,11 +20,11 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 require_once 'uimods.civix.php';
 
 /**
- * Implements hook_civicrm_pre()
+ * All hooks documentation:
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/list/
  */
-function uimods_civicrm_pre($op, $objectName, $id, &$params) {
-  CRM_Uimods_Tools_BirthYear::processPreHook($op, $objectName, $id, $params);
 
+function uimods_civicrm_pre($op, $objectName, $id, &$params) {
   // GP-815: for newly created contacts:
   if ($op == 'create' && !$id && ($objectName == 'Individual' || $objectName == 'Organization')) {
     $preferredLanguage = civicrm_api3('Setting', 'GetValue', [
@@ -43,23 +43,6 @@ function uimods_civicrm_pre($op, $objectName, $id, &$params) {
   }
 }
 
-/**
- * Implements hook_civicrm_post()
- */
-function uimods_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  CRM_Uimods_Tools_BirthYear::processPostHook($op, $objectName, $objectId, $objectRef);
-}
-
-/**
- * Implements hook_civicrm_custom
- */
-function uimods_civicrm_custom( $op, $groupID, $entityID, &$params ) {
-  CRM_Uimods_Tools_BirthYear::processCustomHook($op, $groupID, $entityID, $params);
-}
-
-/**
- * Implements hook_civicrm_searchColumns
- */
 function uimods_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selector ) {
   if ($objectName == 'activity') {
     CRM_Uimods_Tools_SearchTableAdjustments::adjustActivityTable($objectName, $headers, $rows, $selector);
@@ -72,16 +55,10 @@ function uimods_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selecto
   }
 }
 
-/**
- * Implements hook_civicrm_buildForm().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_buildForm
- */
 function uimods_civicrm_buildForm($formName, &$form) {
   // hook in the various renderers
   CRM_Uimods_Tools_MoneyFields::processBuildForm($formName, $form);
   CRM_Uimods_Tools_BankAccount::renderForm($formName, $form);
-  CRM_Uimods_Tools_BirthYear::processBuildFormHook($formName, $form);
   CRM_Uimods_Tools_EmailReceipt::process_buildForm($formName, $form);
   switch ($formName) {
     case 'CRM_Contact_Form_Merge':
@@ -100,16 +77,13 @@ function uimods_civicrm_buildForm($formName, &$form) {
   }
 }
 
-/**
- * Implements hook_civicrm_alterTemplateFile().
- *
- * Use modified templates for Membership and Contribution lists
- * If they stop working (after a CiviCRM upgrade):
- *  1) check if they have changed (compare checksums). If so:
- *  2) create a diff of our files vs. the original file (4.6.22)
- *  3) try to apply (patch) the original files and copy to extension
- */
 function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName) {
+  // Use modified templates for Membership and Contribution lists
+  // If they stop working (after a CiviCRM upgrade):
+  //  1) check if they have changed (compare checksums). If so:
+  //  2) create a diff of our files vs. the original file (4.6.22)
+  //  3) try to apply (patch) the original files and copy to extension
+
   // ACTIVITIES:
   // modified versions based on CiviCRM 5.69.5
   //   CRM/Activity/Form/Search.tpl            SHA1: cd7118ad6e31b43a61d2b2609adc4e0a9525f188
@@ -170,9 +144,6 @@ function uimods_civicrm_alterTemplateFile($formName, &$form, $context, &$tplName
   }
 }
 
-/**
- * implement the hook to customize the summary view
- */
 function uimods_civicrm_pageRun( &$page ) {
   $page_name = $page->getVar('_name');
 
@@ -235,11 +206,6 @@ function uimods_civicrm_pageRun( &$page ) {
   }
 }
 
-/**
- * Implements hook_civicrm_config().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
- */
 function uimods_civicrm_config(&$config) {
   _uimods_civix_civicrm_config($config);
   // register replacement hooks and let them run as early as possible
@@ -262,20 +228,10 @@ function uimods_civicrm_container(ContainerBuilder $container) {
   )->setPublic(TRUE);
 }
 
-/**
- * Implements hook_civicrm_install().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
- */
 function uimods_civicrm_install() {
   _uimods_civix_civicrm_install();
 }
 
-/**
- * Implements hook_civicrm_enable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
- */
 function uimods_civicrm_enable() {
   _uimods_civix_civicrm_enable();
 
@@ -284,11 +240,6 @@ function uimods_civicrm_enable() {
   CRM_Uimods_Config::updateConfig();
 }
 
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- */
 function uimods_civicrm_preProcess($formName, &$form) {
   if ($formName === 'CRM_Contact_Form_Merge') {
     // Re-add colour coding - sill not be required when issue is resolved.
@@ -304,34 +255,11 @@ function uimods_civicrm_preProcess($formName, &$form) {
   }
 }
 
-/**
- * Implements hook_civicrm_validateForm().
- *
- * @param string $formName
- * @param array $fields
- * @param array $files
- * @param CRM_Core_Form $form
- * @param array $errors
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_validateForm
- */
 function uimods_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  CRM_Uimods_Tools_BirthYear::processValidateFormHook($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_DialogerId::processValidateForm($formName, $fields, $files, $form, $errors);
   CRM_Uimods_Tools_MoneyFields::processValidateForm($formName, $fields, $files, $form, $errors);
 }
 
-/**
- * Implementation of hook_civicrm_alterReportVar.
- *
- * @param $varType
- * @param $var
- * @param $reportForm
- *
- * @throws \CRM_Core_Exception
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterReportVar
- */
 function uimods_civicrm_alterReportVar($varType, &$var, $reportForm) {
   if (CRM_Utils_Request::retrieve('revert', 'Boolean') && !CRM_Core_Permission::check('administer CiviCRM')) {
     CRM_Core_Session::setStatus(ts('You do not have permission to revert changes.'), ts('Permission Denied'), 'error');
@@ -424,17 +352,9 @@ function uimods_civicrm_alterAPIPermissions($entity, $action, &$params, &$permis
   $permissions['tag']['update'] = ['manage tags'];
 }
 
-/**
- * Throw exception when attempting to send disallowed email workflows to prevent
- * accidental email communication with supporters
- *
- * @param $params
- * @param $context
- *
- * @return void
- * @throws \Exception
- */
 function uimods_civicrm_alterMailParams(&$params, $context) {
+  // Throw exception when attempting to send disallowed email workflows to prevent
+  // accidental email communication with supporters
   if (!empty($params['workflow']) && $params['workflow'] != 'UNKNOWN') {
     foreach (Civi::settings()->get('allowed_email_workflows') ?? [] as $allowedWorkflow) {
       if (preg_match($allowedWorkflow, $params['workflow'])) {

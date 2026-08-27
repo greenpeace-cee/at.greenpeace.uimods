@@ -4,7 +4,7 @@ namespace Civi\Uimods;
 
 use CiviCRM_API3_Exception;
 use CRM_Core_Session;
-use CRM_Uimods_Tools_BirthYear;
+use Civi\Uimods\Utils\BirthYearService;
 use DateTime;
 use Exception;
 
@@ -95,38 +95,38 @@ class MergeContact {
       return $sqlList;
     }
 
-    $mainContactBirthDate = CRM_Uimods_Tools_BirthYear::getBirthDateFieldValue($this->mainContactId);
-    $mainContactBirthYear = CRM_Uimods_Tools_BirthYear::getBirthYearFieldValue($this->mainContactId);
-    $secondaryContactBirthDate = CRM_Uimods_Tools_BirthYear::getBirthDateFieldValue($this->secondaryContactId);
-    $secondaryContactBirthYear = CRM_Uimods_Tools_BirthYear::getBirthYearFieldValue($this->secondaryContactId);
+    $mainContactBirthDate = BirthYearService::getBirthDateFieldValue($this->mainContactId);
+    $mainContactBirthYear = BirthYearService::getBirthYearFieldValue($this->mainContactId);
+    $secondaryContactBirthDate = BirthYearService::getBirthDateFieldValue($this->secondaryContactId);
+    $secondaryContactBirthYear = BirthYearService::getBirthYearFieldValue($this->secondaryContactId);
 
     if (empty($mainContactBirthDate) && !empty($secondaryContactBirthDate)) {
-      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthDateSQL($this->mainContactId, $secondaryContactBirthDate);
+      $sqlList[] = BirthYearService::getSetBirthDateSQL($this->mainContactId, $secondaryContactBirthDate);
     }
 
     if (empty($mainContactBirthYear) && !empty($secondaryContactBirthYear)) {
-      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $secondaryContactBirthYear);
+      $sqlList[] = BirthYearService::getSetBirthYearSQL($this->mainContactId, $secondaryContactBirthYear);
     }
 
     if (!empty($mainContactBirthDate) && !empty($secondaryContactBirthDate)) {
-      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthDateSQL($this->mainContactId, $mainContactBirthDate);
+      $sqlList[] = BirthYearService::getSetBirthDateSQL($this->mainContactId, $mainContactBirthDate);
     }
 
     if (!empty($mainContactBirthYear) && !empty($secondaryContactBirthYear)) {
-      $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $mainContactBirthYear);
+      $sqlList[] = BirthYearService::getSetBirthYearSQL($this->mainContactId, $mainContactBirthYear);
     }
 
     if (empty($mainContactBirthYear) && empty($secondaryContactBirthYear) && !empty($mainContactBirthDate)) {
       try {
         $birthYear = (new DateTime($mainContactBirthDate))->format('Y');
-        $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
+        $sqlList[] = BirthYearService::getSetBirthYearSQL($this->mainContactId, $birthYear);
       } catch (Exception $e) {}
     }
 
     if (empty($mainContactBirthYear) && empty($secondaryContactBirthYear) && !empty($secondaryContactBirthDate)) {
       try {
         $birthYear = (new DateTime($secondaryContactBirthDate))->format('Y');
-        $sqlList[] = CRM_Uimods_Tools_BirthYear::getSetBirthYearSQL($this->mainContactId, $birthYear);
+        $sqlList[] = BirthYearService::getSetBirthYearSQL($this->mainContactId, $birthYear);
       } catch (Exception $e) {}
     }
 
