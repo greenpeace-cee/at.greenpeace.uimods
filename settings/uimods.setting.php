@@ -95,4 +95,11 @@ return [
     'is_contact' => 0,
     'description' => 'Should the Identity-Aware Proxy session be refreshed periodically?',
   ],
+  'unique_case_types' => [
+    'name'        => 'unique_case_types',
+    'type'        => 'Array',
+    'html_type'   => 'text',
+    'description' => 'Case type names',
+    'default'     => [],
+  ],
  ];
