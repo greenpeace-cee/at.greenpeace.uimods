@@ -93,6 +93,6 @@ return [
     'title'      => ts('Refresh IAP session periodically?'),
     'is_domain'  => 1,
     'is_contact' => 0,
-    'description' => 'Should the Identity-Aware Proxy session be refreshed periodically?',
+    'description' => 'Should the Identity-Aware Proxy session be refreshed periodically? Ignored if the iap_auth extension is enabled.',
   ],
  ];

@@ -450,7 +450,8 @@ function uimods_civicrm_alterBundle(CRM_Core_Resources_Bundle $bundle) {
   if ($bundle->name !== 'coreResources') {
     return;
   }
-  if (Civi::settings()->get('iap_session_refresh_enabled')) {
+  // iap_auth refreshes IAP sessions itself
+  if (Civi::settings()->get('iap_session_refresh_enabled') && !CRM_Extension_System::singleton()->getManager()->isEnabled('iap_auth')) {
     // see https://cloud.google.com/iap/docs/external-identity-sessions#using_an_iframe
     $bundle->addScriptFile('at.greenpeace.uimods', 'js/iap.js');
     $bundle->addVars('uimods', [
